@@ -30,15 +30,15 @@ export function Navigation() {
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
                 <span className="text-academy-orange">📞</span>
-                <span className="text-gray-300">+91 98765 43210</span>
+                <span className="text-gray-300">+91 79045 09575</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="text-academy-orange">✉️</span>
-                <span className="text-gray-300">info@blackbuildingacademy.com</span>
+                <span className="text-gray-300">blackbuildingacademy@gmail.com</span>
               </div>
             </div>
             <div className="text-gray-300">
-              <span className="text-academy-orange">8 Years</span> of Excellence in Education
+              <span className="text-academy-orange">10+ Years</span> of Excellence in Education
             </div>
           </div>
         </div>
@@ -108,11 +108,11 @@ export function Navigation() {
                   <div className="pt-4 space-y-3">
                     <div className="flex items-center space-x-2 text-sm text-gray-300">
                       <span className="text-academy-orange">📞</span>
-                      <span>+91 98765 43210</span>
+                      <span>+91 79045 09575</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-300">
                       <span className="text-academy-orange">✉️</span>
-                      <span>info@blackbuildingacademy.com</span>
+                      <span>blackbuildingacademy@gmail.com</span>
                     </div>
                   </div>
                   <Button

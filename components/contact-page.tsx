@@ -85,12 +85,12 @@ export function ContactPage() {
     {
       icon: Phone,
       title: "Phone",
-      details: ["+91 98765 43210", "+91 87654 32109"],
+      details: ["+91 79045 09575"],
     },
     {
       icon: Mail,
       title: "Email",
-      details: ["info@blackbuildingacademy.com", "admissions@blackbuildingacademy.com"],
+      details: ["blackbuildingacademy@gmail.com", "admissions@blackbuildingacademy.com"],
     },
     {
       icon: Clock,

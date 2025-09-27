@@ -39,7 +39,7 @@ export function Footer() {
               <span className="text-academy-orange"> Academy</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Chennai's No.1 Tuition Center with 8 years of excellence in State Board education. 100% pass guarantee
+              Chennai's No.1 Tuition Center with 10+ years of excellence in State Board education. 100% pass guarantee
               with personalized learning approach.
             </p>
             <div className="flex space-x-4">
@@ -101,14 +101,13 @@ export function Footer() {
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-academy-orange flex-shrink-0" />
                 <div className="text-gray-300 text-sm">
-                  <p>+91 98765 43210</p>
-                  <p>+91 87654 32109</p>
+                  <p>+91 79045 09575</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-academy-orange flex-shrink-0" />
                 <div className="text-gray-300 text-sm">
-                  <p>info@blackbuildingacademy.com</p>
+                  <p>blackbuildingacademy@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">

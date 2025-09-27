@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/toaster"
 export const metadata: Metadata = {
   title: "Black Building Academy - Chennai's No.1 Tuition Center",
   description:
-    "8 Years of Excellence in State Board 10th & 12th Exams. 100% Pass Guarantee | Assured Marks | Top Rank Holders | 0 Failures",
+    "10+ Years of Excellence in State Board 10th & 12th Exams. 100% Pass Guarantee | Assured Marks | Top Rank Holders | 0 Failures",
   generator: "v0.app",
 }
 

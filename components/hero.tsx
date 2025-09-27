@@ -16,7 +16,7 @@ export function Hero() {
         </h1>
 
         <p className="text-xl md:text-2xl lg:text-3xl mb-4 text-academy-orange font-semibold animate-fade-in-up">
-          8 Years of Excellence in State Board 10th & 12th Exams
+          10+ Years of Excellence in State Board 10th & 12th Exams
         </p>
 
         <p className="text-lg md:text-xl lg:text-2xl mb-8 text-gray-300 max-w-4xl mx-auto text-balance animate-fade-in-up">
