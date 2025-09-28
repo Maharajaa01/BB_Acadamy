@@ -21,10 +21,10 @@ const courses = [
 ]
 
 const socialLinks = [
-  { name: "Facebook", href: "#", icon: Facebook },
-  { name: "Twitter", href: "#", icon: Twitter },
-  { name: "Instagram", href: "#", icon: Instagram },
-  { name: "YouTube", href: "#", icon: Youtube },
+  { name: "Facebook", href: "https://www.facebook.com/blackbuildingacademy/", icon: Facebook },
+  // { name: "Twitter", href: "#", icon: Twitter },
+  { name: "Instagram", href: "https://www.instagram.com/blackbuildingacademy/", icon: Instagram },
+  { name: "YouTube", href: "https://www.youtube.com/@bbacademy", icon: Youtube },
 ]
 
 export function Footer() {
@@ -93,9 +93,10 @@ export function Footer() {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-academy-orange flex-shrink-0 mt-0.5" />
                 <div className="text-gray-300 text-sm">
-                  <p>123 Education Street</p>
-                  <p>T. Nagar, Chennai - 600017</p>
-                  <p>Tamil Nadu, India</p>
+                   
+                  <p>10, Vivekananda Street,</p>
+                  <p>MGR Nagar, Nesapakkam, Chennai</p>
+                  <p>,Tamil Nadu 600078</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">

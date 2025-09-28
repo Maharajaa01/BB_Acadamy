@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { X, ImageIcon, Calendar, Eye } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
 interface GalleryImage {
@@ -23,6 +24,19 @@ export function GalleryPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+const showNextImage = () => {
+  if (!selectedImage) return
+  const currentIndex = images.findIndex(img => img.id === selectedImage.id)
+  const nextIndex = (currentIndex + 1) % images.length // loop back to first
+  setSelectedImage(images[nextIndex])
+}
+
+const showPrevImage = () => {
+  if (!selectedImage) return
+  const currentIndex = images.findIndex(img => img.id === selectedImage.id)
+  const prevIndex = (currentIndex - 1 + images.length) % images.length // loop back to last
+  setSelectedImage(images[prevIndex])
+}
 
   const fetchImages = async () => {
     setLoading(true)
@@ -46,27 +60,27 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
       setImages([
         {
           id: "1",
-          title: "Annual Day Celebration 2024",
-          url: "/students-celebrating-annual-day.jpg",
-          thumbnail: "/students-celebrating-annual-day.jpg",
-          description: "Students showcasing their talents during our annual day celebration",
+          title: "Motivation For Public Exam",
+          url: "/dash_board.jpg",
+          thumbnail: "/dash_board.jpg",
+          description: "Public Exam Preparation",
           date: "2024-03-15",
           category: "Events",
         },
         {
           id: "2",
           title: "Top Rank Holders Recognition",
-          url: "/students-receiving-awards-ceremony.jpg",
-          thumbnail: "/students-receiving-awards-ceremony.jpg",
+          url: "/boys_girls_price.jpg",
+          thumbnail: "/boys_girls_price.jpg",
           description: "Recognizing our top-performing students in board examinations",
           date: "2024-05-20",
           category: "Achievements",
         },
         {
           id: "3",
-          title: "Science Exhibition",
-          url: "/students-science-fair-projects.jpg",
-          thumbnail: "/students-science-fair-projects.jpg",
+          title: "Staff",
+          url: "/staff_group_photo.jpg",
+          thumbnail: "/staff_group_photo.jpg",
           description: "Students presenting innovative science projects",
           date: "2024-02-10",
           category: "Academic",
@@ -74,8 +88,9 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
         {
           id: "4",
           title: "Mathematics Competition",
-          url: "/students-math-competition-classroom.jpg",
-          thumbnail: "/students-math-competition-classroom.jpg",
+
+          url: "/teachers_making_centum.jpg",
+          thumbnail: "/teachers_making_centum.jpg",
           description: "Inter-class mathematics competition winners",
           date: "2024-01-25",
           category: "Competition",
@@ -83,8 +98,8 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
         {
           id: "5",
           title: "Cultural Program",
-          url: "/students-cultural-dance-performance.jpg",
-          thumbnail: "/students-cultural-dance-performance.jpg",
+          url: "/2025_12th_girls.jpeg",
+          thumbnail: "/2025_12th_girls.jpeg",
           description: "Students performing traditional dance during cultural program",
           date: "2024-04-08",
           category: "Cultural",
@@ -92,18 +107,18 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
         {
           id: "6",
           title: "Study Group Session",
-          url: "/students-group-study-session-classroom.jpg",
-          thumbnail: "/students-group-study-session-classroom.jpg",
+          url: "/students_group_photo.jpg",
+          thumbnail: "/students_group_photo.jpg",
           description: "Collaborative learning session in progress",
           date: "2024-06-12",
           category: "Academic",
         },
         {
           id: "7",
-          title: "Sports Day Activities",
-          url: "/students-sports-day-running-track.jpg",
-          thumbnail: "/students-sports-day-running-track.jpg",
-          description: "Annual sports day with various athletic competitions",
+          title: "Students Activities",
+          url: "/8th_standard_stationary.jpg",
+          thumbnail: "/8th_standard_stationary.jpg",
+          description: "Every day with various Learning competitions",
           date: "2024-02-28",
           category: "Sports",
         },
@@ -119,8 +134,9 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
         {
           id: "9",
           title: "Graduation Ceremony",
-          url: "/students-graduation-ceremony-caps-gowns.jpg",
-          thumbnail: "/students-graduation-ceremony-caps-gowns.jpg",
+         
+          url: "/2025_12th_students.jpeg",
+          thumbnail: "/2025_12th_students.jpeg",
           description: "Celebrating our graduating students' achievements",
           date: "2024-05-30",
           category: "Graduation",
@@ -266,9 +282,29 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
                     )}
                   </div>
                 </div>
-                <Button onClick={closeModal} variant="ghost" size="sm" className="absolute top-4 right-4 h-8 w-8 p-0">
-                  <X className="h-4 w-4" />
-                </Button>
+                {/* Previous Button */}
+<Button
+  onClick={showPrevImage}
+  variant="ghost"
+  size="icon"
+  className="absolute top-1/2 left-4 -translate-y-1/2 h-12 w-12 rounded-full bg-white/70 backdrop-blur-md shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-transform"
+>
+  <ChevronLeft className="h-6 w-6 text-gray-800" />
+</Button>
+
+{/* Next Button */}
+<Button
+  onClick={showNextImage}
+  variant="ghost"
+  size="icon"
+  className="absolute top-1/2 right-4 -translate-y-1/2 h-12 w-12 rounded-full bg-white/70 backdrop-blur-md shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-transform"
+>
+  <ChevronRight className="h-6 w-6 text-gray-800" />
+</Button>
+
+                {/* <Button onClick={closeModal} variant="ghost" size="sm" className="absolute top-4 right-4 h-8 w-8 p-0"> */}
+                  {/* <X className="h-4 w-4" />
+                </Button> */}
               </>
             )}
           </DialogContent>

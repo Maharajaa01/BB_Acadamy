@@ -3,6 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+html {
+  scrollbar-gutter: stable; /* Modern browsers */
+  overflow-y: scroll; /* Fallback for Safari/older browsers */
+}
+
 :root {
   /* Custom color scheme for Black Building Academy */
   --background: oklch(1 0 0); /* White */

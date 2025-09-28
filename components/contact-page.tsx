@@ -80,7 +80,7 @@ export function ContactPage() {
     {
       icon: MapPin,
       title: "Address",
-      details: ["123 Education Street", "T. Nagar, Chennai - 600017", "Tamil Nadu, India"],
+      details: ["10, Vivekananda St, MGR Nagar, Nesapakkam, Chennai, Tamil Nadu 600078"],
     },
     {
       icon: Phone,

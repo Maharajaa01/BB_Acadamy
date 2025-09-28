@@ -51,7 +51,7 @@ export function AdmissionFormDialog({ open, onOpenChange }: Props) {
     }
     setLoading(true)
     try {
-      const res = await fetch("/api/resource/Admissions", {
+      const res = await fetch("/api/resource/admissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, phone, standard, group, message }),
