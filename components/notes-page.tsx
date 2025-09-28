@@ -1,4 +1,5 @@
-"use client"
+"use client"                     // Marks this as a client component
+export const dynamic = "force-dynamic"  // Forces dynamic rendering, disables static generation
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,6 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Download, FileText, BookOpen, Eye, Calendar, GraduationCap } from "lucide-react"
+
+// ...rest of your code remains the same
+
 
 interface Note {
   id: string
@@ -121,7 +125,10 @@ export function NotesPage() {
         ...(selectedGroup && { group: selectedGroup }),
       })
 
-      const response = await fetch(`/api/resource/Notes?${params}`)
+         const apiBase = typeof window !== "undefined" ? window.location.origin : "";
+    const response = await fetch(`${apiBase}/api/resource/Notes?${params}`);
+
+
 
       if (!response.ok) {
         throw new Error("Failed to fetch notes")
@@ -171,7 +178,9 @@ export function NotesPage() {
         examType: qpExamType,
       })
 
-      const response = await fetch(`/api/resource/QuestionPapers?${params}`)
+          const apiBase = typeof window !== "undefined" ? window.location.origin : "";
+    const response = await fetch(`${apiBase}/api/resource/Notes?${params}`);
+
       const data = await response.json()
       setQuestionPapers(data.questionPapers || [])
     } catch (err) {

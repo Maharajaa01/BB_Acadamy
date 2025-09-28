@@ -29,7 +29,9 @@ export function GalleryPage() {
     setError(null)
 
     try {
-      const response = await fetch("/api/resource/Gallery")
+      const apiBase = typeof window !== "undefined" ? window.location.origin : "";
+const response = await fetch(`${apiBase}/api/resource/Gallery`);
+
 
       if (!response.ok) {
         throw new Error("Failed to fetch gallery images")
