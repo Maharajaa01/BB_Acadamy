@@ -56,14 +56,50 @@ export function CareerPage() {
     fetchJobs()
   }, [])
 
+  // Helper function to build headers
+  const getHeaders = () => {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    }
+    const token = process.env.NEXT_PUBLIC_FRAPPE_API_TOKEN
+    if (token) {
+      headers["Authorization"] = `token ${token}`
+    }
+    return headers
+  }
+
   const fetchJobs = async () => {
     try {
-      const response = await fetch("/api/resource/Career")
+      const filters = [["status", "=", "Open"]]
+      const params = new URLSearchParams({
+        fields: JSON.stringify(["name", "title", "short_description", "description", "skills", "location", "job_type", "experience", "posted_date"]),
+        filters: JSON.stringify(filters),
+        order_by: "posted_date desc"
+      })
+
+      const response = await fetch(`/api/resource/Job Opening?${params}`, {
+        headers: getHeaders()
+      })
+
       if (response.ok) {
         const data = await response.json()
-        setJobs(data.jobs)
+        const mappedJobs: Job[] = (data.data || []).map((item: any) => ({
+          id: item.name,
+          title: item.title,
+          shortDescription: item.short_description,
+          fullDescription: item.description,
+          requiredSkills: item.skills ? item.skills.split(",").map((s: string) => s.trim()) : [],
+          location: item.location,
+          type: item.job_type,
+          experience: item.experience,
+          postedDate: item.posted_date
+        }))
+        setJobs(mappedJobs)
+      } else {
+        throw new Error("Failed to fetch jobs")
       }
     } catch (error) {
+      console.error("Error fetching jobs:", error)
       toast({
         title: "Error",
         description: "Failed to load job listings. Please try again.",
@@ -113,19 +149,43 @@ export function CareerPage() {
 
     setSubmitting(true)
     try {
-      const formData = new FormData()
-      formData.append("jobId", selectedJob.id)
-      formData.append("jobTitle", selectedJob.title)
-      formData.append("name", applicationForm.name)
-      formData.append("email", applicationForm.email)
-      formData.append("phone", applicationForm.phone)
+      let fileUrl = ""
+
+      // 1. Upload Resume if exists
       if (applicationForm.resume) {
-        formData.append("resume", applicationForm.resume)
+        const formData = new FormData()
+        formData.append("file", applicationForm.resume)
+        formData.append("is_private", "1") // Keep resumes private ideally
+
+        // Note: Do not rely on getHeaders() for FormData as browser sets Content-Type boundary automatically
+        const uploadHeaders: Record<string, string> = {}
+        const token = process.env.NEXT_PUBLIC_FRAPPE_API_TOKEN
+        if (token) uploadHeaders["Authorization"] = `token ${token}`
+
+        const uploadRes = await fetch("/api/method/upload_file", {
+          method: "POST",
+          headers: uploadHeaders,
+          body: formData,
+        })
+
+        if (!uploadRes.ok) throw new Error("Resume upload failed")
+        const uploadData = await uploadRes.json()
+        fileUrl = uploadData.message.file_url
       }
 
-      const response = await fetch("/api/resource/Career Application", {
+      // 2. Create Job Applicant
+      const payload = {
+        applicant_name: applicationForm.name,
+        email_id: applicationForm.email,
+        phone: applicationForm.phone,
+        job_opening: selectedJob.id,
+        resume_attachment: fileUrl
+      }
+
+      const response = await fetch("/api/resource/Job Applicant", {
         method: "POST",
-        body: formData,
+        headers: getHeaders(),
+        body: JSON.stringify(payload),
       })
 
       if (response.ok) {
@@ -140,6 +200,7 @@ export function CareerPage() {
         throw new Error("Failed to submit application")
       }
     } catch (error) {
+      console.error(error)
       toast({
         title: "Error",
         description: "Failed to submit application. Please try again.",
@@ -161,15 +222,18 @@ export function CareerPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-academy-black text-white py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-balance">
+      <section className="bg-academy-black text-white py-16 lg:py-24 relative overflow-hidden">
+        {/* Background ambient light */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-academy-orange/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6 text-balance animate-fade-up">
             Join Our <span className="text-academy-orange">Team</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-pretty">
+          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-pretty animate-fade-up delay-100">
             Build your career with Black Building Academy and help shape the future of education
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-gray-300">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-sm text-gray-300 animate-fade-up delay-200">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-academy-orange" />
               <span>Growing Team</span>
@@ -206,13 +270,14 @@ export function CareerPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {jobs.map((job) => (
+              {jobs.map((job, index) => (
                 <Card
                   key={job.id}
-                  className="border-2 hover:border-academy-orange transition-colors duration-300 group"
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 glass animate-fade-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <CardHeader>
-                    <CardTitle className="text-xl font-bold text-academy-black group-hover:text-academy-orange transition-colors">
+                    <CardTitle className="text-xl font-heading font-bold text-academy-black group-hover:text-academy-orange transition-colors">
                       {job.title}
                     </CardTitle>
                     <CardDescription className="text-gray-600">{job.shortDescription}</CardDescription>

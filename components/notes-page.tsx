@@ -6,7 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Download, FileText, BookOpen, Eye, Calendar, GraduationCap } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Download, FileText, BookOpen, Eye, Calendar as CalendarIcon, GraduationCap } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils"
 
 // ...rest of your code remains the same
 
@@ -79,16 +86,27 @@ export function NotesPage() {
   const [selectedStandard, setSelectedStandard] = useState<string>("")
   const [selectedGroup, setSelectedGroup] = useState<string>("")
   const [selectedSubject, setSelectedSubject] = useState<string>("")
-  const [notes, setNotes] = useState<Note[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
+  // Notes State
+  const [notes, setNotes] = useState<Note[]>([])
+  const [loadingNotes, setLoadingNotes] = useState(false)
+  const [errorNotes, setErrorNotes] = useState<string | null>(null)
+
+  // Question Papers State
   const [questionPapers, setQuestionPapers] = useState<QuestionPaper[]>([])
   const [qpStandard, setQpStandard] = useState<string>("")
   const [qpFromYear, setQpFromYear] = useState<string>("")
   const [qpToYear, setQpToYear] = useState<string>("")
   const [qpExamType, setQpExamType] = useState<string>("")
   const [qpLoading, setQpLoading] = useState(false)
+  const [errorQP, setErrorQP] = useState<string | null>(null)
+  const [qpFromYearOpen, setQpFromYearOpen] = useState(false)
+  const [qpToYearOpen, setQpToYearOpen] = useState(false)
+
+  // Pagination State
+  const [notesPage, setNotesPage] = useState(1)
+  const [qpPage, setQpPage] = useState(1)
+  const ITEMS_PER_PAGE = 9
 
   const getAvailableSubjects = () => {
     if (!selectedStandard) return []
@@ -112,462 +130,473 @@ export function NotesPage() {
     setSelectedSubject("")
   }
 
-  const fetchNotes = async () => {
-    if (!selectedStandard || !selectedSubject) return
+  // Helper function to build headers
+  const getHeaders = () => {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    }
+    // Using environment variable for token if available
+    const token = process.env.NEXT_PUBLIC_FRAPPE_API_TOKEN
+    if (token) {
+      headers["Authorization"] = `token ${token}`
+    }
+    return headers
+  }
 
-    setLoading(true)
-    setError(null)
+  useEffect(() => {
+    fetchNotes()
+  }, [selectedStandard, selectedSubject, selectedGroup, notesPage]) // Add notesPage dependency
 
+  useEffect(() => {
+    fetchQuestionPapers()
+  }, [qpStandard, qpExamType, qpFromYear, qpToYear, qpPage]) // Add qpPage dependency
+
+  // Reset page when filters change
+  useEffect(() => {
+    setNotesPage(1)
+  }, [selectedStandard, selectedSubject, selectedGroup])
+
+  useEffect(() => {
+    setQpPage(1)
+  }, [qpStandard, qpExamType, qpFromYear, qpToYear])
+
+
+  async function fetchNotes() {
+    if (!selectedStandard || !selectedSubject) {
+      setNotes([])
+      return
+    }
+
+    setLoadingNotes(true)
+    setErrorNotes(null)
     try {
+      const filters = [
+        ["type", "=", "Note"],
+        ["standard", "=", selectedStandard],
+        ["subject", "=", selectedSubject],
+        ["is_published", "=", 1]
+      ]
+
+      if (selectedGroup) {
+        filters.push(["group", "=", selectedGroup])
+      }
+
       const params = new URLSearchParams({
-        standard: selectedStandard,
-        subject: selectedSubject,
-        ...(selectedGroup && { group: selectedGroup }),
+        fields: JSON.stringify(["name", "title", "subject", "standard", "group", "file_url", "description"]),
+        filters: JSON.stringify(filters),
+        limit_page_length: ITEMS_PER_PAGE.toString(),
+        limit_start: ((notesPage - 1) * ITEMS_PER_PAGE).toString(),
+        order_by: "creation desc"
       })
 
-         const apiBase = typeof window !== "undefined" ? window.location.origin : "";
-    const response = await fetch(`${apiBase}/api/resource/Notes?${params}`);
-
-
+      const response = await fetch(`/api/resource/Study Material?${params}`, {
+        headers: getHeaders()
+      })
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error("Unauthorized: Please check your API token")
+        }
         throw new Error("Failed to fetch notes")
       }
 
       const data = await response.json()
-      setNotes(data.notes || [])
-    } catch (err) {
-      setError("Failed to load notes. Please try again.")
+      // Map Frappe response to Note interface
+      const fetchedNotes: Note[] = (data.data || []).map((item: any) => ({
+        id: item.name,
+        title: item.title,
+        subject: item.subject,
+        standard: item.standard,
+        group: item.group,
+        downloadUrl: item.file_url, // Construct full URL if needed
+        description: item.description
+      }))
+
+      setNotes(fetchedNotes)
+    } catch (err: any) {
       console.error("Error fetching notes:", err)
-      // Mock data for demonstration
-      setNotes([
-        {
-          id: "1",
-          title: `Chapter 1: Introduction to ${selectedSubject}`,
-          subject: selectedSubject,
-          standard: selectedStandard,
-          group: selectedGroup,
-          downloadUrl: "#",
-          description: `Comprehensive notes covering basic ${selectedSubject.toLowerCase()} concepts and problem-solving techniques.`,
-        },
-        {
-          id: "2",
-          title: `Chapter 2: Advanced ${selectedSubject}`,
-          subject: selectedSubject,
-          standard: selectedStandard,
-          group: selectedGroup,
-          downloadUrl: "#",
-          description: `Detailed explanation of advanced topics with practical examples and applications.`,
-        },
-      ])
+      setErrorNotes(err.message)
+      // Fallback for dev/demo if API fails
+      if (process.env.NODE_ENV === "development") {
+        // setNotes(mockNotes) // Uncomment to use mock data
+      }
     } finally {
-      setLoading(false)
+      setLoadingNotes(false)
     }
   }
 
-  const fetchQuestionPapers = async () => {
-    if (!qpStandard || !qpFromYear || !qpToYear || !qpExamType) return
+  async function fetchQuestionPapers() {
+    if (!qpStandard || !qpFromYear || !qpToYear || !qpExamType) {
+      setQuestionPapers([])
+      return
+    }
 
     setQpLoading(true)
-
+    setErrorQP(null)
     try {
+      const filters = [
+        ["type", "=", "Question Paper"],
+        ["standard", "=", qpStandard],
+        ["exam_type", "=", qpExamType], // Note: Frappe fieldname 'exam_type'
+        ["year", ">=", qpFromYear],
+        ["year", "<=", qpToYear],
+        ["is_published", "=", 1]
+      ]
+
       const params = new URLSearchParams({
-        standard: qpStandard,
-        fromYear: qpFromYear,
-        toYear: qpToYear,
-        examType: qpExamType,
+        fields: JSON.stringify(["name", "title", "standard", "year", "exam_type", "subject", "file_url"]),
+        filters: JSON.stringify(filters),
+        limit_page_length: ITEMS_PER_PAGE.toString(),
+        limit_start: ((qpPage - 1) * ITEMS_PER_PAGE).toString(),
+        order_by: "year desc"
       })
 
-          const apiBase = typeof window !== "undefined" ? window.location.origin : "";
-    const response = await fetch(`${apiBase}/api/resource/Notes?${params}`);
+      const response = await fetch(`/api/resource/Study Material?${params}`, {
+        headers: getHeaders()
+      })
+
+      if (!response.ok) throw new Error("Failed to fetch question papers")
 
       const data = await response.json()
-      setQuestionPapers(data.questionPapers || [])
-    } catch (err) {
-      console.error("Error fetching question papers:", err)
-      // Mock data for demonstration
-      setQuestionPapers([
-        {
-          id: "1",
-          title: `${qpStandard}th Physics ${qpExamType} ${qpFromYear}`,
-          standard: qpStandard,
-          year: qpFromYear,
-          examType: qpExamType,
-          subject: "Physics",
-          viewUrl: "#",
-          downloadUrl: "#",
-        },
-        {
-          id: "2",
-          title: `${qpStandard}th Mathematics ${qpExamType} ${qpToYear}`,
-          standard: qpStandard,
-          year: qpToYear,
-          examType: qpExamType,
-          subject: "Mathematics",
-          viewUrl: "#",
-          downloadUrl: "#",
-        },
-      ])
+
+      const fetchedQPs: QuestionPaper[] = (data.data || []).map((item: any) => ({
+        id: item.name,
+        title: item.title,
+        subject: item.subject,
+        standard: item.standard,
+        year: item.year,
+        examType: item.exam_type,
+        viewUrl: "#", // View functionality might need update
+        downloadUrl: item.file_url
+      }))
+
+      setQuestionPapers(fetchedQPs)
+    } catch (err: any) {
+      console.error("Error fetching QPs:", err)
+      setErrorQP(err.message)
     } finally {
       setQpLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchNotes()
-  }, [selectedStandard, selectedSubject, selectedGroup])
-
-  useEffect(() => {
-    fetchQuestionPapers()
-  }, [qpStandard, qpFromYear, qpToYear, qpExamType])
-
-  const handleDownload = (item: Note | QuestionPaper, type: string) => {
-    console.log(`Downloading ${type}:`, item.title)
-    alert(`Downloading: ${item.title}`)
+  const handleDownload = (url: string, title: string) => {
+    console.log(`Downloading: ${title} from ${url}`)
+    // In a real application, you might open the URL in a new tab or trigger a download
+    window.open(url, '_blank')
   }
 
   const availableSubjects = getAvailableSubjects()
   const requiresGroup = selectedStandard === "11" || selectedStandard === "12"
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-academy-black mb-4">Study Materials</h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto text-balance">
-            Access comprehensive study materials, notes, and question papers for all subjects and standards
+    <div className="min-h-screen bg-gray-50 pb-20">
+      {/* Hero Section */}
+      <section className="bg-academy-black text-white py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-academy-orange/20 via-transparent to-transparent"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 animate-fade-up">Study Materials</h1>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto animate-fade-up delay-100">
+            Access our comprehensive collection of notes and question papers to excel in your studies.
           </p>
-          <div className="w-24 h-1 bg-academy-orange mx-auto mt-4"></div>
         </div>
+      </section>
 
-        {/* Notes Section */}
-        <section className="mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-academy-black mb-6 sm:mb-8 text-center">Study Notes</h2>
+      <div className="container mx-auto px-4 -mt-10 relative z-20">
+        <Tabs defaultValue="notes" className="w-full">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-14 bg-white shadow-xl rounded-full p-1 mb-12 animate-fade-up delay-200">
+            <TabsTrigger
+              value="notes"
+              className="rounded-full text-base font-medium data-[state=active]:!bg-academy-orange data-[state=active]:!text-white text-gray-600 transition-all duration-300"
+            >
+              Notes
+            </TabsTrigger>
+            <TabsTrigger
+              value="question-papers"
+              className="rounded-full text-base font-medium data-[state=active]:!bg-academy-orange data-[state=active]:!text-white text-gray-600 transition-all duration-300"
+            >
+              Question Papers
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Notes Filters */}
-          <Card className="mb-6 sm:mb-8 border-2 border-gray-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-academy-black text-lg sm:text-xl">
-                <BookOpen className="h-5 w-5 text-academy-orange" />
-                Select Your Course
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-4 sm:gap-6">
-                {/* Standard Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Standard</label>
-                  <Select value={selectedStandard} onValueChange={handleStandardChange}>
-                    <SelectTrigger className="w-full h-12">
-                      <SelectValue placeholder="Choose your standard" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {standards.map((standard) => (
-                        <SelectItem key={standard.value} value={standard.value}>
-                          {standard.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Group Selection (for 11th and 12th only) */}
-                {requiresGroup && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Select Group</label>
-                    <Select value={selectedGroup} onValueChange={handleGroupChange}>
-                      <SelectTrigger className="w-full h-12">
-                        <SelectValue placeholder="Choose your group" />
+          {/* NOTES TAB */}
+          <TabsContent value="notes" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Filters */}
+            <Card className="bg-white/80 backdrop-blur-md border-none shadow-lg sticky top-20 z-30">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label>Standard</Label>
+                    <Select value={selectedStandard} onValueChange={setSelectedStandard}>
+                      <SelectTrigger className="glass-input">
+                        <SelectValue placeholder="Select Standard" />
                       </SelectTrigger>
                       <SelectContent>
-                        {groups.map((group) => (
-                          <SelectItem key={group.value} value={group.value}>
-                            {group.label}
-                          </SelectItem>
+                        {standards.map((s) => (
+                          <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                )}
 
-                {/* Subject Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Subject</label>
-                  <Select
-                    value={selectedSubject}
-                    onValueChange={setSelectedSubject}
-                    disabled={!selectedStandard || (requiresGroup && !selectedGroup)}
-                  >
-                    <SelectTrigger className="w-full h-12">
-                      <SelectValue placeholder="Choose your subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableSubjects.map((subject) => (
-                        <SelectItem key={subject.toLowerCase().replace(" ", "-")} value={subject}>
-                          {subject}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notes Content */}
-          {loading && (
-            <div className="text-center py-8 sm:py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-academy-orange"></div>
-              <p className="mt-4 text-gray-600">Loading notes...</p>
-            </div>
-          )}
-
-          {error && (
-            <Card className="border-red-200 bg-red-50 mb-6">
-              <CardContent className="p-4 sm:p-6 text-center">
-                <p className="text-red-600 text-sm sm:text-base">{error}</p>
-                <Button onClick={fetchNotes} className="mt-4 bg-transparent" variant="outline">
-                  Try Again
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {!loading && !error && notes.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {notes.map((note) => (
-                <Card
-                  key={note.id}
-                  className="border-2 border-gray-200 hover:border-academy-orange hover:shadow-lg transition-all duration-300"
-                >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-start gap-3 text-base sm:text-lg">
-                      <FileText className="h-5 w-5 text-academy-orange flex-shrink-0 mt-1" />
-                      <span className="text-academy-black text-balance leading-tight">{note.title}</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span className="font-medium">Subject:</span>
-                        <span>{note.subject}</span>
-                      </div>
-                      {note.description && (
-                        <p className="text-sm text-gray-600 text-pretty line-clamp-2">{note.description}</p>
-                      )}
-                      <Button
-                        onClick={() => handleDownload(note, "note")}
-                        className="w-full bg-academy-orange hover:bg-orange-600 text-white h-10 sm:h-11"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Notes
-                      </Button>
+                  {(selectedStandard === "11th" || selectedStandard === "12th") && (
+                    <div className="space-y-2 animate-in zoom-in-50 duration-300">
+                      <Label>Group</Label>
+                      <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+                        <SelectTrigger className="glass-input">
+                          <SelectValue placeholder="Select Group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {groups.map((g) => (
+                            <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                  )}
 
-          {!loading &&
-            !error &&
-            notes.length === 0 &&
-            selectedStandard &&
-            selectedSubject &&
-            (!requiresGroup || selectedGroup) && (
-              <Card className="border-gray-200">
-                <CardContent className="p-8 sm:p-12 text-center">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Notes Available</h3>
-                  <p className="text-gray-600 text-sm sm:text-base">
-                    No study notes are currently available for the selected criteria.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-          {(!selectedStandard || !selectedSubject || (requiresGroup && !selectedGroup)) && (
-            <Card className="border-gray-200">
-              <CardContent className="p-8 sm:p-12 text-center">
-                <BookOpen className="h-12 w-12 text-academy-orange mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Select Your Course</h3>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Please select all required fields to view available notes.
-                </p>
+                  <div className="space-y-2">
+                    <Label>Subject</Label>
+                    <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                      <SelectTrigger className="glass-input">
+                        <SelectValue placeholder="Select Subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSubjects.map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          )}
-        </section>
 
-        {/* Question Papers Section */}
-        <section>
-          <h2 className="text-2xl sm:text-3xl font-bold text-academy-black mb-6 sm:mb-8 text-center">
-            Question Papers
-          </h2>
-
-          {/* Question Papers Filters */}
-          <Card className="mb-6 sm:mb-8 border-2 border-gray-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-academy-black text-lg sm:text-xl">
-                <GraduationCap className="h-5 w-5 text-academy-orange" />
-                Filter Question Papers
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Standard</label>
-                  <Select value={qpStandard} onValueChange={setQpStandard}>
-                    <SelectTrigger className="w-full h-12">
-                      <SelectValue placeholder="Select standard" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {standards.map((standard) => (
-                        <SelectItem key={standard.value} value={standard.value}>
-                          {standard.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">From Year</label>
-                  <Select value={qpFromYear} onValueChange={setQpFromYear}>
-                    <SelectTrigger className="w-full h-12">
-                      <SelectValue placeholder="From year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {generateYearOptions().map((year) => (
-                        <SelectItem key={year.value} value={year.value}>
-                          {year.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">To Year</label>
-                  <Select value={qpToYear} onValueChange={setQpToYear}>
-                    <SelectTrigger className="w-full h-12">
-                      <SelectValue placeholder="To year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {generateYearOptions().map((year) => (
-                        <SelectItem key={year.value} value={year.value}>
-                          {year.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Exam Type</label>
-                  <Select value={qpExamType} onValueChange={setQpExamType}>
-                    <SelectTrigger className="w-full h-12">
-                      <SelectValue placeholder="Select exam type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {examTypes.map((examType) => (
-                        <SelectItem key={examType.value} value={examType.value}>
-                          {examType.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            {/* Notes Grid */}
+            {loadingNotes ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i} className="h-48 animate-pulse bg-gray-100 border-none" />
+                ))}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Question Papers Content */}
-          {qpLoading && (
-            <div className="text-center py-8 sm:py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-academy-orange"></div>
-              <p className="mt-4 text-gray-600">Loading question papers...</p>
-            </div>
-          )}
-
-          {!qpLoading && questionPapers.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {questionPapers.map((paper) => (
-                <Card
-                  key={paper.id}
-                  className="border-2 border-gray-200 hover:border-academy-orange hover:shadow-lg transition-all duration-300"
-                >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-start gap-3 text-base sm:text-lg">
-                      <Calendar className="h-5 w-5 text-academy-orange flex-shrink-0 mt-1" />
-                      <span className="text-academy-black text-balance leading-tight">{paper.title}</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap gap-2 text-sm text-gray-600">
-                        <span className="bg-gray-100 px-2 py-1 rounded">{paper.subject}</span>
-                        <span className="bg-gray-100 px-2 py-1 rounded">{paper.year}</span>
-                        <span className="bg-gray-100 px-2 py-1 rounded capitalize">{paper.examType}</span>
-                      </div>
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" className="flex-1 h-10 sm:h-11 bg-transparent">
-                              <Eye className="h-4 w-4 mr-2" />
-                              View
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
-                            <DialogHeader>
-                              <DialogTitle>{paper.title}</DialogTitle>
-                            </DialogHeader>
-                            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-center">
-                              <p className="text-gray-600">Question paper preview would appear here</p>
-                              <p className="text-sm text-gray-500 mt-2">PDF or image preview functionality</p>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
+            ) : errorNotes ? (
+              <div className="text-center py-20">
+                <p className="text-red-500">{errorNotes}</p>
+                <Button variant="outline" onClick={fetchNotes} className="mt-4">Retry</Button>
+              </div>
+            ) : notes.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-dashed border-gray-200">
+                <div className="w-16 h-16 bg-academy-orange/10 text-academy-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No notes found</h3>
+                <p className="text-gray-500">Try changing your filters to see more results.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {notes.map((note, idx) => (
+                    <Card key={note.id} className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-none shadow-md overflow-hidden glass" style={{ animationDelay: `${idx * 100}ms` }}>
+                      <CardHeader className="bg-gradient-to-br from-orange-50 to-white border-b border-orange-100 p-6">
+                        <div className="flex justify-between items-start">
+                          <Badge variant="secondary" className="bg-white/80 backdrop-blur text-academy-orange hover:bg-white shadow-sm border-orange-100">
+                            {note.subject}
+                          </Badge>
+                          <FileText className="h-5 w-5 text-gray-400 group-hover:text-academy-orange transition-colors" />
+                        </div>
+                        <CardTitle className="mt-4 text-xl line-clamp-2 group-hover:text-academy-orange transition-colors">
+                          {note.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6">
+                        <p className="text-sm text-gray-500 mb-6 line-clamp-3">
+                          {note.description || "Comprehensive update for standard " + note.standard}
+                        </p>
                         <Button
-                          onClick={() => handleDownload(paper, "question paper")}
-                          className="flex-1 bg-academy-orange hover:bg-orange-600 text-white h-10 sm:h-11"
+                          className="w-full bg-academy-black group-hover:bg-academy-orange text-white transition-all duration-300 shadow-lg group-hover:shadow-orange-200"
+                          onClick={() => handleDownload(note.downloadUrl, note.title)}
                         >
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
+                          <Download className="mr-2 h-4 w-4" /> Download PDF
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Pagination Controls for Notes */}
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <Button
+                    variant="outline"
+                    onClick={() => setNotesPage(p => Math.max(1, p - 1))}
+                    disabled={notesPage === 1}
+                    className="border-academy-orange text-academy-orange hover:bg-orange-50"
+                  >
+                    Previous
+                  </Button>
+                  <span className="text-sm font-medium text-gray-600">Page {notesPage}</span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setNotesPage(p => p + 1)}
+                    disabled={notes.length < ITEMS_PER_PAGE}
+                    className="border-academy-orange text-academy-orange hover:bg-orange-50"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </>
+            )}
+          </TabsContent>
+
+          {/* QUESTION PAPERS TAB */}
+          <TabsContent value="question-papers" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Filters */}
+            <Card className="bg-white/80 backdrop-blur-md border-none shadow-lg sticky top-20 z-30">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <Label>Standard</Label>
+                    <Select value={qpStandard} onValueChange={setQpStandard}>
+                      <SelectTrigger className="glass-input"><SelectValue /></SelectTrigger>
+                      <SelectContent>{standards.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Exam Type</Label>
+                    <Select value={qpExamType} onValueChange={setQpExamType}>
+                      <SelectTrigger className="glass-input"><SelectValue /></SelectTrigger>
+                      <SelectContent>{examTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 flex flex-col">
+                    <Label>From Year</Label>
+                    <Popover open={qpFromYearOpen} onOpenChange={setQpFromYearOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal glass-input",
+                            !qpFromYear && "text-muted-foreground"
+                          )}
+                        >
+                          {qpFromYear ? qpFromYear : <span>Pick a year</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={qpFromYear ? new Date(parseInt(qpFromYear), 0, 1) : new Date()}
+                          onSelect={(date) => {
+                            if (date) {
+                              setQpFromYear(date.getFullYear().toString())
+                              setQpFromYearOpen(false)
+                            }
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="space-y-2 flex flex-col">
+                    <Label>To Year</Label>
+                    <Popover open={qpToYearOpen} onOpenChange={setQpToYearOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal glass-input",
+                            !qpToYear && "text-muted-foreground"
+                          )}
+                        >
+                          {qpToYear ? qpToYear : <span>Pick a year</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={qpToYear ? new Date(parseInt(qpToYear), 0, 1) : new Date()}
+                          onSelect={(date) => {
+                            if (date) {
+                              setQpToYear(date.getFullYear().toString())
+                              setQpToYearOpen(false)
+                            }
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* QP List */}
+            {qpLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => <div key={i} className="h-24 bg-gray-100 rounded-xl animate-pulse" />)}
+              </div>
+            ) : errorQP ? (
+              <p className="text-red-500 text-center">{errorQP}</p>
+            ) : questionPapers.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-dashed border-gray-200">
+                <p className="text-gray-500">No question papers found.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid gap-4">
+                  {questionPapers.map((qp, idx) => (
+                    <Card key={qp.id} className="group hover:shadow-lg transition-all duration-300 border-none shadow-sm glass overflow-hidden" style={{ animationDelay: `${idx * 100}ms` }}>
+                      <div className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                          <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-academy-orange group-hover:scale-110 transition-transform">
+                            <FileText className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-lg text-academy-black group-hover:text-academy-orange transition-colors">{qp.title}</h3>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              <Badge variant="outline" className="text-xs">{qp.standard}</Badge>
+                              <Badge variant="outline" className="text-xs">{qp.subject}</Badge>
+                              <Badge variant="outline" className="text-xs">{qp.year}</Badge>
+                              <Badge className="bg-academy-black text-xs">{qp.examType}</Badge>
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          className="hover:bg-orange-50 text-academy-orange w-full md:w-auto"
+                          onClick={() => handleDownload(qp.downloadUrl, qp.title)}
+                        >
+                          <Download className="mr-2 h-4 w-4" /> Download
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                    </Card>
+                  ))}
+                </div>
 
-          {!qpLoading && questionPapers.length === 0 && qpStandard && qpFromYear && qpToYear && qpExamType && (
-            <Card className="border-gray-200">
-              <CardContent className="p-8 sm:p-12 text-center">
-                <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Question Papers Found</h3>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  No question papers are available for the selected criteria.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {(!qpStandard || !qpFromYear || !qpToYear || !qpExamType) && (
-            <Card className="border-gray-200">
-              <CardContent className="p-8 sm:p-12 text-center">
-                <GraduationCap className="h-12 w-12 text-academy-orange mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Filter Question Papers</h3>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Please select all filter criteria to view available question papers.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </section>
+                {/* Pagination Controls for QP */}
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <Button
+                    variant="outline"
+                    onClick={() => setQpPage(p => Math.max(1, p - 1))}
+                    disabled={qpPage === 1}
+                    className="border-academy-orange text-academy-orange hover:bg-orange-50"
+                  >
+                    Previous
+                  </Button>
+                  <span className="text-sm font-medium text-gray-600">Page {qpPage}</span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setQpPage(p => p + 1)}
+                    disabled={questionPapers.length < ITEMS_PER_PAGE}
+                    className="border-academy-orange text-academy-orange hover:bg-orange-50"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )

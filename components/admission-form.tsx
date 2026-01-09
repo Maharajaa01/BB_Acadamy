@@ -51,12 +51,38 @@ export function AdmissionFormDialog({ open, onOpenChange }: Props) {
     }
     setLoading(true)
     try {
-      const res = await fetch("/api/resource/admissions", {
+      // Construction payload matching Frappe DocType 'Admission Inquiry'
+      const payload = {
+        student_name: fullName,
+        email: email,
+        phone: phone,
+        standard: standard,
+        group: group,
+        message: message,
+        status: "New" // Default status
+      }
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      }
+
+      const token = process.env.NEXT_PUBLIC_FRAPPE_API_TOKEN
+      if (token) {
+        headers["Authorization"] = `token ${token}`
+      }
+
+      const res = await fetch("/api/resource/Admission Inquiry", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, phone, standard, group, message }),
+        headers: headers,
+        body: JSON.stringify(payload),
       })
-      if (!res.ok) throw new Error("Failed to submit")
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        console.error("Submission failed:", errorData)
+        throw new Error(errorData.exception || "Failed to submit")
+      }
+
       toast({ description: "Application submitted successfully. We'll contact you soon!" })
       // reset form
       setFullName("")

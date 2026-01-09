@@ -5,31 +5,36 @@
 
 
 html {
-  scrollbar-gutter: stable; /* Modern browsers */
-  overflow-y: scroll; /* Fallback for Safari/older browsers */
+  scroll-behavior: smooth;
 }
 
 :root {
   /* Custom color scheme for Black Building Academy */
-  --background: oklch(1 0 0); /* White */
-  --foreground: oklch(0 0 0); /* Black */
+  --background: oklch(1 0 0);
+  /* White */
+  --foreground: oklch(0 0 0);
+  /* Black */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0.65 0.2 45); /* Orange #FF6B00 */
-  --primary-foreground: oklch(1 0 0); /* White text on orange */
+  --primary: oklch(0.65 0.2 45);
+  /* Orange #FF6B00 */
+  --primary-foreground: oklch(1 0 0);
+  /* White text on orange */
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.4 0 0);
-  --accent: oklch(0.65 0.2 45); /* Orange accent */
+  --accent: oklch(0.65 0.2 45);
+  /* Orange accent */
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.9 0 0);
   --input: oklch(0.95 0 0);
-  --ring: oklch(0.65 0.2 45); /* Orange ring */
+  --ring: oklch(0.65 0.2 45);
+  /* Orange ring */
   --chart-1: oklch(0.65 0.2 45);
   --chart-2: oklch(0 0 0);
   --chart-3: oklch(0.5 0 0);
@@ -47,13 +52,16 @@ html {
 }
 
 .dark {
-  --background: oklch(0 0 0); /* Black background */
-  --foreground: oklch(1 0 0); /* White text */
+  --background: oklch(0 0 0);
+  /* Black background */
+  --foreground: oklch(1 0 0);
+  /* White text */
   --card: oklch(0.05 0 0);
   --card-foreground: oklch(1 0 0);
   --popover: oklch(0.05 0 0);
   --popover-foreground: oklch(1 0 0);
-  --primary: oklch(0.65 0.2 45); /* Orange stays same */
+  --primary: oklch(0.65 0.2 45);
+  /* Orange stays same */
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.1 0 0);
   --secondary-foreground: oklch(1 0 0);
@@ -82,8 +90,8 @@ html {
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-outfit);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -126,6 +134,7 @@ html {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -174,10 +183,7 @@ html {
   background: #e55a00;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+
 
 /* Focus styles for accessibility */
 .focus-visible:focus {
@@ -186,75 +192,79 @@ html {
 }
 
 /* Animation for cards */
-@keyframes fadeInUp {
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Animations */
+@keyframes fadeUp {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* Responsive text sizes */
+.animate-fade-up {
+  animation: fadeUp 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+/* Stagger delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Mobile Optimizations */
 @media (max-width: 640px) {
-  .text-responsive-xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-}
-
-@media (min-width: 641px) {
-  .text-responsive-xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .text-responsive-xl {
-    font-size: 3rem;
-    line-height: 1;
-  }
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-
-  body {
-    background: white !important;
-    color: black !important;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .bg-academy-orange {
-    background-color: #ff4500 !important;
-  }
-
-  .text-academy-orange {
-    color: #ff4500 !important;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  html {
-    scroll-behavior: auto;
+  .container-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }

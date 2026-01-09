@@ -4,12 +4,12 @@ export function AboutSection() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-academy-black mb-4">About Black Building Academy!</h2>
-          <div className="w-24 h-1 bg-academy-orange mx-auto"></div>
+        <div className="text-center mb-12 animate-fade-up">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-4">About Black Building Academy!</h2>
+          <div className="w-24 h-1 bg-academy-orange mx-auto rounded-full"></div>
         </div>
 
-        <Card className="border-none shadow-lg">
+        <Card className="border-none shadow-xl glass animate-fade-up delay-100">
           <CardContent className="p-8 md:p-12">
             <p className="text-lg leading-relaxed text-gray-700 mb-6 text-pretty">
               BB Academy is proud to be recognized as Chennai's No.1 Tuition Center, offering top-tier educational

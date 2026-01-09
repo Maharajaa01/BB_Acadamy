@@ -10,6 +10,7 @@ import { AdmissionFormDialog } from "@/components/admission-form";
 
 const navItems = [
   { name: "Home", href: "/" },
+  { name: "About Us", href: "/about" },
   { name: "Notes", href: "/notes" },
   { name: "Gallery", href: "/gallery" },
   { name: "Career", href: "/career" },

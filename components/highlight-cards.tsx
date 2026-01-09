@@ -26,11 +26,12 @@ export function HighlightCards() {
           {highlights.map((highlight, index) => (
             <Card
               key={index}
-              className="border-2 border-gray-200 hover:border-academy-orange transition-colors duration-300"
+              className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 glass animate-fade-up"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <CardContent className="p-6 text-center">
                 <div className="text-4xl mb-4">{highlight.icon}</div>
-                <h3 className="text-xl font-bold mb-3 text-academy-black">{highlight.title}</h3>
+                <h3 className="text-xl font-heading font-bold mb-3 text-academy-black">{highlight.title}</h3>
                 <p className="text-gray-600 text-balance">{highlight.description}</p>
               </CardContent>
             </Card>

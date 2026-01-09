@@ -256,6 +256,24 @@ export function ContactPage() {
             </Card>
           </div>
         </div>
+
+        {/* Google Map Section */}
+        <div className="mt-16 animate-fade-up delay-200">
+          <Card className="border-none shadow-xl overflow-hidden glass p-2">
+            <div className="aspect-[21/9] w-full relative rounded-xl overflow-hidden bg-gray-200">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.0323438565374!2d80.19762627359022!3d13.033612313518686!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267639ab02ded%3A0x9824337fb2ea2701!2sBB%20Academy%20-%20Tuition%20Center!5e0!3m2!1sen!2sin!4v1767960903323!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 w-full h-full"
+              ></iframe>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   )
