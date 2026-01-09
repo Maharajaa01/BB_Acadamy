@@ -11,8 +11,6 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Download, FileText, BookOpen, Eye, Calendar as CalendarIcon, GraduationCap } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 
 // ...rest of your code remains the same
@@ -74,9 +72,8 @@ const examTypes = [
 ]
 
 const generateYearOptions = () => {
-  const currentYear = new Date().getFullYear()
   const years = []
-  for (let year = currentYear; year >= 2015; year--) {
+  for (let year = 2026; year >= 2017; year--) {
     years.push({ value: year.toString(), label: year.toString() })
   }
   return years
@@ -100,8 +97,6 @@ export function NotesPage() {
   const [qpExamType, setQpExamType] = useState<string>("")
   const [qpLoading, setQpLoading] = useState(false)
   const [errorQP, setErrorQP] = useState<string | null>(null)
-  const [qpFromYearOpen, setQpFromYearOpen] = useState(false)
-  const [qpToYearOpen, setQpToYearOpen] = useState(false)
 
   // Pagination State
   const [notesPage, setNotesPage] = useState(1)
@@ -466,65 +461,27 @@ export function NotesPage() {
                       <SelectContent>{examTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2 flex flex-col">
+                  <div className="space-y-2">
                     <Label>From Year</Label>
-                    <Popover open={qpFromYearOpen} onOpenChange={setQpFromYearOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal glass-input",
-                            !qpFromYear && "text-muted-foreground"
-                          )}
-                        >
-                          {qpFromYear ? qpFromYear : <span>Pick a year</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={qpFromYear ? new Date(parseInt(qpFromYear), 0, 1) : new Date()}
-                          onSelect={(date) => {
-                            if (date) {
-                              setQpFromYear(date.getFullYear().toString())
-                              setQpFromYearOpen(false)
-                            }
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Select value={qpFromYear} onValueChange={setQpFromYear}>
+                      <SelectTrigger className="glass-input"><SelectValue placeholder="Pick a year" /></SelectTrigger>
+                      <SelectContent>
+                        {generateYearOptions().map(year => (
+                          <SelectItem key={year.value} value={year.value}>{year.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="space-y-2 flex flex-col">
+                  <div className="space-y-2">
                     <Label>To Year</Label>
-                    <Popover open={qpToYearOpen} onOpenChange={setQpToYearOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal glass-input",
-                            !qpToYear && "text-muted-foreground"
-                          )}
-                        >
-                          {qpToYear ? qpToYear : <span>Pick a year</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={qpToYear ? new Date(parseInt(qpToYear), 0, 1) : new Date()}
-                          onSelect={(date) => {
-                            if (date) {
-                              setQpToYear(date.getFullYear().toString())
-                              setQpToYearOpen(false)
-                            }
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Select value={qpToYear} onValueChange={setQpToYear}>
+                      <SelectTrigger className="glass-input"><SelectValue placeholder="Pick a year" /></SelectTrigger>
+                      <SelectContent>
+                        {generateYearOptions().map(year => (
+                          <SelectItem key={year.value} value={year.value}>{year.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </CardContent>
