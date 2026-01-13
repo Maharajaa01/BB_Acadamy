@@ -17,7 +17,7 @@ export default {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://127.0.0.1:8900/api/:path*',
+        destination: 'http://127.0.0.1:8000/api/:path*',
       },
     ]
   },

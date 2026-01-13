@@ -72,9 +72,9 @@ export function CareerPage() {
     try {
       const filters = [["status", "=", "Open"]]
       const params = new URLSearchParams({
-        fields: JSON.stringify(["name", "title", "short_description", "description", "skills", "location", "job_type", "experience", "posted_date"]),
+        fields: JSON.stringify(["name", "job_title", "short_description", "description", "skills", "location", "employment_type", "experience", "posted_on"]),
         filters: JSON.stringify(filters),
-        order_by: "posted_date desc"
+        order_by: "posted_on desc"
       })
 
       const response = await fetch(`/api/resource/Job Opening?${params}`, {
@@ -85,14 +85,14 @@ export function CareerPage() {
         const data = await response.json()
         const mappedJobs: Job[] = (data.data || []).map((item: any) => ({
           id: item.name,
-          title: item.title,
+          title: item.job_title,
           shortDescription: item.short_description,
           fullDescription: item.description,
           requiredSkills: item.skills ? item.skills.split(",").map((s: string) => s.trim()) : [],
           location: item.location,
-          type: item.job_type,
+          type: item.employment_type,
           experience: item.experience,
-          postedDate: item.posted_date
+          postedDate: item.posted_on
         }))
         setJobs(mappedJobs)
       } else {
@@ -177,8 +177,8 @@ export function CareerPage() {
       const payload = {
         applicant_name: applicationForm.name,
         email_id: applicationForm.email,
-        phone: applicationForm.phone,
-        job_opening: selectedJob.id,
+        phone_number: applicationForm.phone,
+        job_title: selectedJob.id,
         resume_attachment: fileUrl
       }
 
