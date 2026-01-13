@@ -1,9 +1,50 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import Image from "next/image"
+
+const carouselImages = [
+  "/students-group-study-session-classroom.jpg",
+  "/students-receiving-awards-ceremony.jpg",
+  "/students-celebrating-annual-day.jpg",
+  "/teachers_making_centum.jpg",
+]
 
 export function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <section className="bg-academy-black text-white py-20 lg:py-32 relative overflow-hidden">
+      {/* Carousel Background Images */}
+      {carouselImages.map((image, index) => (
+        <div
+          key={image}
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-30" : "opacity-0"
+            }`}
+        >
+          <Image
+            src={image}
+            alt={`Slide ${index + 1}`}
+            fill
+            className="object-cover"
+            priority={index === 0}
+          />
+        </div>
+      ))}
+
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/60"></div>
+
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-gradient-to-br from-academy-orange/20 to-transparent"></div>

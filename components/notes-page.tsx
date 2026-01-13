@@ -47,23 +47,12 @@ const standards = [
   { value: "12", label: "12th Standard" },
 ]
 
-const subjectsByStandard = {
-  "6": ["Tamil", "English", "Maths", "Science", "Social Science"],
-  "7": ["Tamil", "English", "Maths", "Science", "Social Science"],
-  "8": ["Tamil", "English", "Maths", "Science", "Social Science"],
-  "9": ["Tamil", "English", "Maths", "Science", "Social Science"],
-  "10": ["Tamil", "English", "Maths", "Science", "Social Science"],
-}
-
 const groups = [
   { value: "science", label: "Science Group" },
   { value: "commerce", label: "Accounts/Commerce Group" },
 ]
 
-const subjectsByGroup = {
-  science: ["English", "Tamil", "Maths", "Physics", "Chemistry", "Computer Science", "Biology"],
-  commerce: ["Tamil", "English", "Probability", "Accounts", "Commerce", "Economics"],
-}
+
 
 const examTypes = [
   { value: "quarterly", label: "Quarterly" },
@@ -89,6 +78,9 @@ export function NotesPage() {
   const [loadingNotes, setLoadingNotes] = useState(false)
   const [errorNotes, setErrorNotes] = useState<string | null>(null)
 
+  // Subject State
+  const [availableSubjects, setAvailableSubjects] = useState<string[]>([])
+
   // Question Papers State
   const [questionPapers, setQuestionPapers] = useState<QuestionPaper[]>([])
   const [qpStandard, setQpStandard] = useState<string>("")
@@ -102,17 +94,6 @@ export function NotesPage() {
   const [notesPage, setNotesPage] = useState(1)
   const [qpPage, setQpPage] = useState(1)
   const ITEMS_PER_PAGE = 9
-
-  const getAvailableSubjects = () => {
-    if (!selectedStandard) return []
-
-    if (selectedStandard === "11" || selectedStandard === "12") {
-      if (!selectedGroup) return []
-      return subjectsByGroup[selectedGroup as keyof typeof subjectsByGroup] || []
-    }
-
-    return subjectsByStandard[selectedStandard as keyof typeof subjectsByStandard] || []
-  }
 
   const handleStandardChange = (value: string) => {
     setSelectedStandard(value)
@@ -138,6 +119,12 @@ export function NotesPage() {
     return headers
   }
 
+
+
+  useEffect(() => {
+    fetchSubjects()
+  }, [selectedStandard]) // Re-fetch subjects when standard changes
+
   useEffect(() => {
     fetchNotes()
   }, [selectedStandard, selectedSubject, selectedGroup, notesPage]) // Add notesPage dependency
@@ -145,6 +132,33 @@ export function NotesPage() {
   useEffect(() => {
     fetchQuestionPapers()
   }, [qpStandard, qpExamType, qpFromYear, qpToYear, qpPage]) // Add qpPage dependency
+
+  async function fetchSubjects() {
+    if (!selectedStandard) {
+      setAvailableSubjects([])
+      return
+    }
+    try {
+      // Fetch subjects filtered by standard
+      const filters = [["standard", "=", selectedStandard]]
+      const params = new URLSearchParams({
+        fields: JSON.stringify(["subject_name"]), // Fetch subject_name
+        filters: JSON.stringify(filters),
+        limit_page_length: "100"
+      })
+
+      const response = await fetch(`/api/resource/Subject?${params}`, {
+        headers: getHeaders()
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const subjects = (data.data || []).map((item: any) => item.subject_name)
+        setAvailableSubjects(subjects)
+      }
+    } catch (error) {
+      console.error("Failed to fetch subjects:", error)
+    }
+  }
 
   // Reset page when filters change
   useEffect(() => {
@@ -157,20 +171,21 @@ export function NotesPage() {
 
 
   async function fetchNotes() {
-    if (!selectedStandard || !selectedSubject) {
-      setNotes([])
-      return
-    }
-
     setLoadingNotes(true)
     setErrorNotes(null)
     try {
       const filters = [
         ["type", "=", "Note"],
-        ["standard", "=", selectedStandard],
-        ["subject", "=", selectedSubject],
         ["is_published", "=", 1]
       ]
+
+      if (selectedStandard) {
+        filters.push(["standard", "=", selectedStandard])
+      }
+
+      if (selectedSubject) {
+        filters.push(["subject", "=", selectedSubject])
+      }
 
       if (selectedGroup) {
         filters.push(["group", "=", selectedGroup])
@@ -261,7 +276,6 @@ export function NotesPage() {
         standard: item.standard,
         year: item.year,
         examType: item.exam_type,
-        viewUrl: "#", // View functionality might need update
         downloadUrl: item.file_url
       }))
 
@@ -280,7 +294,6 @@ export function NotesPage() {
     window.open(url, '_blank')
   }
 
-  const availableSubjects = getAvailableSubjects()
   const requiresGroup = selectedStandard === "11" || selectedStandard === "12"
 
   return (
@@ -301,13 +314,13 @@ export function NotesPage() {
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-14 bg-white shadow-xl rounded-full p-1 mb-12 animate-fade-up delay-200">
             <TabsTrigger
               value="notes"
-              className="rounded-full text-base font-medium data-[state=active]:!bg-academy-orange data-[state=active]:!text-white text-gray-600 transition-all duration-300"
+              className="rounded-full text-base font-medium data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
             >
               Notes
             </TabsTrigger>
             <TabsTrigger
               value="question-papers"
-              className="rounded-full text-base font-medium data-[state=active]:!bg-academy-orange data-[state=active]:!text-white text-gray-600 transition-all duration-300"
+              className="rounded-full text-base font-medium data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
             >
               Question Papers
             </TabsTrigger>
@@ -333,7 +346,7 @@ export function NotesPage() {
                     </Select>
                   </div>
 
-                  {(selectedStandard === "11th" || selectedStandard === "12th") && (
+                  {(selectedStandard === "11" || selectedStandard === "12") && (
                     <div className="space-y-2 animate-in zoom-in-50 duration-300">
                       <Label>Group</Label>
                       <Select value={selectedGroup} onValueChange={setSelectedGroup}>
@@ -554,6 +567,8 @@ export function NotesPage() {
             )}
           </TabsContent>
         </Tabs>
+
+
       </div>
     </div>
   )

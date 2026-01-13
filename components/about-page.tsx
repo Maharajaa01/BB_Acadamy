@@ -83,22 +83,73 @@ export function AboutPage() {
             </section>
 
             {/* Video Section */}
+            {/* Video Section */}
             <section className="py-20 bg-gray-50">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-12 animate-fade-up">Our Journey on Video</h2>
-                    <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl animate-fade-up delay-100">
-                        <div className="aspect-video relative">
-                            <iframe
-                                width="100%"
-                                height="100%"
-                                src="https://www.youtube.com/embed/wvW4bf_q-PA?si=ft2uQ_IgKgyrF1u-"
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerPolicy="strict-origin-when-cross-origin"
-                                allowFullScreen
-                                className="absolute inset-0 w-full h-full"
-                            ></iframe>
+                    <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-12 animate-fade-up">Life at BB Academy</h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* Video 1: Gamified Learning */}
+                        <div className="space-y-4 animate-fade-up delay-100">
+                            <div className="rounded-2xl overflow-hidden shadow-xl aspect-video relative group">
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    src="https://www.youtube.com/embed/rHnlrJ4L7Hk?si=XsJzYburG2jvkknH"
+                                    title="Gamified Learning"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowFullScreen
+                                    className="absolute inset-0 w-full h-full"
+                                ></iframe>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-academy-black">Fun & Learning Combined</h3>
+                                <p className="text-gray-600 mt-2">Engaging students with educational games to make studying enjoyable.</p>
+                            </div>
+                        </div>
+
+                        {/* Video 2: VLP Awards */}
+                        <div className="space-y-4 animate-fade-up delay-200">
+                            <div className="rounded-2xl overflow-hidden shadow-xl aspect-video relative group">
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    src="https://www.youtube.com/embed/h7U2qVeOnZ8?si=MV8ZlL85c2yOzA3M"
+                                    title="VLP Awards"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowFullScreen
+                                    className="absolute inset-0 w-full h-full"
+                                ></iframe>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-academy-black">Celebrating Excellence (VLP)</h3>
+                                <p className="text-gray-600 mt-2">Recognizing 'Vera Level Performers' and awarding staff to keep motivation high.</p>
+                            </div>
+                        </div>
+
+                        {/* Video 3: Night Study */}
+                        <div className="space-y-4 animate-fade-up delay-300">
+                            <div className="rounded-2xl overflow-hidden shadow-xl aspect-video relative group">
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    src="https://www.youtube.com/embed/FB_c_lZ6iMA?si=QM0zWsoc05eBD6Qi"
+                                    title="Quarterly Exam Night Study"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowFullScreen
+                                    className="absolute inset-0 w-full h-full"
+                                ></iframe>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-academy-black">Dedicated Night Study</h3>
+                                <p className="text-gray-600 mt-2">Special coaching sessions for Quarterly Exams to ensure top performance.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,38 +231,7 @@ export function AboutPage() {
                 </div>
             </section>
 
-            {/* FAQ Section */}
-            <section className="py-20 container mx-auto px-4 bg-gray-50">
-                <div className="max-w-3xl mx-auto">
-                    <div className="text-center mb-16 animate-fade-up">
-                        <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-6">Frequently Asked Questions</h2>
-                        <p className="text-gray-600 text-lg">Common questions about admissions and our coaching methods.</p>
-                    </div>
 
-                    <Accordion type="single" collapsible className="w-full space-y-4 animate-fade-up delay-100">
-                        <AccordionItem value="item-1" className="bg-white rounded-xl border px-6 shadow-sm">
-                            <AccordionTrigger className="text-lg font-semibold text-academy-black hover:text-academy-orange hover:no-underline">What standards/grades do you cover?</AccordionTrigger>
-                            <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                                We provide expert coaching for students from 6th to 12th standard, covering State Board curriculum with specialized focus on 10th and 12th board exams.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-2" className="bg-white rounded-xl border px-6 shadow-sm">
-                            <AccordionTrigger className="text-lg font-semibold text-academy-black hover:text-academy-orange hover:no-underline">Do you offer separate classes for boys and girls?</AccordionTrigger>
-                            <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                                Yes, we ensure a comfortable learning environment by offering separate batches and classes for boys and girls to provide personalized attention and focus.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-3" className="bg-white rounded-xl border px-6 shadow-sm">
-                            <AccordionTrigger className="text-lg font-semibold text-academy-black hover:text-academy-orange hover:no-underline">How do you ensure student progress?</AccordionTrigger>
-                            <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                                We use a comprehensive Performance Tracking System with regular report cards, daily attendance monitoring, and the unique 'Seal System' to track and improve student performance continuously.
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </div>
-            </section>
 
             {/* Growth Timeline */}
             <section className="py-20 container mx-auto px-4">
@@ -261,6 +281,64 @@ export function AboutPage() {
                         </Card>
                     </div>
 
+                </div>
+            </section>
+
+            {/* Founder Biography Section */}
+            <section className="py-20 bg-gray-50">
+                <div className="container mx-auto px-4 text-center">
+                    <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-8 animate-fade-up">The Man Behind the Vision</h2>
+                    <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl animate-fade-up delay-100">
+                        <div className="aspect-video relative">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src="https://www.youtube.com/embed/wvW4bf_q-PA?si=MMpKatqj3y9fPGXI"
+                                title="Mr. Tamil Selvan Biography"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                allowFullScreen
+                                className="absolute inset-0 w-full h-full"
+                            ></iframe>
+                        </div>
+                    </div>
+                    <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto animate-fade-up delay-200">
+                        The inspiring journey of Mr. Tamil Selvan and how he started Black Building Academy.
+                    </p>
+                </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="py-20 container mx-auto px-4 bg-gray-50">
+                <div className="max-w-3xl mx-auto">
+                    <div className="text-center mb-16 animate-fade-up">
+                        <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-6">Frequently Asked Questions</h2>
+                        <p className="text-gray-600 text-lg">Common questions about admissions and our coaching methods.</p>
+                    </div>
+
+                    <Accordion type="single" collapsible className="w-full space-y-4 animate-fade-up delay-100">
+                        <AccordionItem value="item-1" className="bg-white rounded-xl border px-6 shadow-sm">
+                            <AccordionTrigger className="text-lg font-semibold text-academy-black hover:text-academy-orange hover:no-underline">What standards/grades do you cover?</AccordionTrigger>
+                            <AccordionContent className="text-gray-600 text-base leading-relaxed">
+                                We provide expert coaching for students from 6th to 12th standard, covering State Board curriculum with specialized focus on 10th and 12th board exams.
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="item-2" className="bg-white rounded-xl border px-6 shadow-sm">
+                            <AccordionTrigger className="text-lg font-semibold text-academy-black hover:text-academy-orange hover:no-underline">Do you offer separate classes for boys and girls?</AccordionTrigger>
+                            <AccordionContent className="text-gray-600 text-base leading-relaxed">
+                                Yes, we ensure a comfortable learning environment by offering separate batches and classes for boys and girls to provide personalized attention and focus.
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="item-3" className="bg-white rounded-xl border px-6 shadow-sm">
+                            <AccordionTrigger className="text-lg font-semibold text-academy-black hover:text-academy-orange hover:no-underline">How do you ensure student progress?</AccordionTrigger>
+                            <AccordionContent className="text-gray-600 text-base leading-relaxed">
+                                We use a comprehensive Performance Tracking System with regular report cards, daily attendance monitoring, and the unique 'Seal System' to track and improve student performance continuously.
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 </div>
             </section>
 

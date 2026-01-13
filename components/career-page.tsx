@@ -28,6 +28,8 @@ interface Job {
   location: string
   type: string
   experience: string
+  salary?: string
+  closesOn?: string
   postedDate: string
 }
 
@@ -72,7 +74,13 @@ export function CareerPage() {
     try {
       const filters = [["status", "=", "Open"]]
       const params = new URLSearchParams({
-        fields: JSON.stringify(["name", "job_title", "short_description", "description", "skills", "location", "employment_type", "experience", "posted_on"]),
+        fields: JSON.stringify([
+          "name", "job_title", "status", "description",
+          "custom_skills", "custom_experience",
+          "location", "employment_type",
+          "posted_on", "closes_on",
+          "currency", "lower_range", "upper_range", "salary_per", "publish_salary_range"
+        ]),
         filters: JSON.stringify(filters),
         order_by: "posted_on desc"
       })
@@ -80,20 +88,39 @@ export function CareerPage() {
       const response = await fetch(`/api/resource/Job Opening?${params}`, {
         headers: getHeaders()
       })
-
       if (response.ok) {
         const data = await response.json()
-        const mappedJobs: Job[] = (data.data || []).map((item: any) => ({
-          id: item.name,
-          title: item.job_title,
-          shortDescription: item.short_description,
-          fullDescription: item.description,
-          requiredSkills: item.skills ? item.skills.split(",").map((s: string) => s.trim()) : [],
-          location: item.location,
-          type: item.employment_type,
-          experience: item.experience,
-          postedDate: item.posted_on
-        }))
+        const mappedJobs: Job[] = (data.data || []).map((item: any) => {
+          // Parse skills: Try custom_skills first, then standard skills
+          let skills: string[] = []
+          const sourceSkills = item.custom_skills || item.skills
+          if (sourceSkills) {
+            // Handle newline or comma separation
+            skills = sourceSkills.split(/[,\n]+/).map((s: string) => s.trim()).filter(Boolean)
+          }
+
+          // Format Salary
+          let salary = ""
+          if (item.publish_salary_range && item.lower_range && item.upper_range) {
+            const currency = item.currency || "INR" // Default or from item
+            // Simple formatter - can be improved
+            const format = (n: number) => n.toLocaleString('en-IN', { style: 'currency', currency: currency, maximumFractionDigits: 0 })
+            salary = `${format(item.lower_range)} - ${format(item.upper_range)} / ${item.salary_per || 'Month'}`
+          }
+          return {
+            id: item.name,
+            title: item.job_title,
+            shortDescription: item.short_description || item.description?.replace(/<[^>]*>/g, '').substring(0, 100) + "..." || "",
+            fullDescription: item.description, // HTML content
+            requiredSkills: skills,
+            location: item.location || item.city || "Remote",
+            type: item.employment_type || item.job_type || "Full Time",
+            experience: item.custom_experience || item.experience || "",
+            salary: salary,
+            closesOn: item.closes_on,
+            postedDate: item.posted_on
+          }
+        })
         setJobs(mappedJobs)
       } else {
         throw new Error("Failed to fetch jobs")
@@ -298,6 +325,16 @@ export function CareerPage() {
                         <FileText className="h-4 w-4 text-academy-orange" />
                         <span>Posted {job.postedDate}</span>
                       </div>
+                      {job.salary && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold text-academy-black">{job.salary}</span>
+                        </div>
+                      )}
+                      {job.closesOn && (
+                        <div className="text-xs text-red-500 mt-2">
+                          Closes on {job.closesOn}
+                        </div>
+                      )}
                     </div>
 
                     <Dialog>
@@ -320,22 +357,27 @@ export function CareerPage() {
                         <div className="space-y-6">
                           <div>
                             <h3 className="text-lg font-semibold text-academy-black mb-3">Job Description</h3>
-                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">{job.fullDescription}</p>
+                            <div
+                              className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{ __html: job.fullDescription }}
+                            />
                           </div>
 
-                          <div>
-                            <h3 className="text-lg font-semibold text-academy-black mb-3">Required Skills</h3>
-                            <div className="flex flex-wrap gap-2">
-                              {job.requiredSkills.map((skill, index) => (
-                                <span
-                                  key={index}
-                                  className="px-3 py-1 bg-academy-orange/10 text-academy-orange rounded-full text-sm font-medium"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
+                          {job.requiredSkills.length > 0 && (
+                            <div>
+                              <h3 className="text-lg font-semibold text-academy-black mb-3">Required Skills</h3>
+                              <div className="flex flex-wrap gap-2">
+                                {job.requiredSkills.map((skill, index) => (
+                                  <span
+                                    key={index}
+                                    className="px-3 py-1 bg-academy-orange/10 text-academy-orange rounded-full text-sm font-medium"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
                           <Button
                             className="w-full bg-academy-orange hover:bg-orange-600 text-white"
