@@ -78,8 +78,7 @@ export function Hero() {
           <Link href="/contact">
             <Button
               size="lg"
-              variant="outline"
-              className="border-academy-orange text-academy-orange hover:bg-academy-orange hover:text-white px-8 py-4 text-lg font-semibold transition-all duration-300 bg-transparent hover:shadow-[0_0_20px_rgba(255,107,0,0.3)]"
+              className="border-2 border-academy-orange text-academy-orange hover:bg-academy-orange hover:!text-white px-8 py-4 text-lg font-semibold transition-all duration-300 bg-transparent hover:border-academy-orange hover:shadow-[0_0_20px_rgba(255,107,0,0.5)]"
             >
               Contact Us
             </Button>
