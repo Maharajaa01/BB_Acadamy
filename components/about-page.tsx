@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Users, GraduationCap, Award, Heart, History, TrendingUp, UserCheck, ShieldCheck, Target, BarChart, Lightbulb, User } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import Image from 'next/image';
 
 export function AboutPage() {
     return (
@@ -32,7 +33,7 @@ export function AboutPage() {
                             {/* Placeholder for Founder Image */}
                             <div className="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-400">
                                 <span className="text-lg">Add Photo: Tamil Selvan</span>
-                                {/* User should replace this div with: <Image src="/founder.jpg" alt="Tamil Selvan" fill className="object-cover" /> */}
+                                <Image src="/founder.jpg" alt="Tamil Selvan" fill className="object-cover" />
                             </div>
                         </div>
                         <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-xl shadow-xl max-w-xs animate-scale-in delay-300 hidden md:block">

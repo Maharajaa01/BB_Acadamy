@@ -7,8 +7,10 @@ import Image from "next/image"
 
 const carouselImages = [
   "/students-group-study-session-classroom.jpg",
-  "/students-receiving-awards-ceremony.jpg",
-  "/students-celebrating-annual-day.jpg",
+  // "/students-receiving-awards-ceremony.jpg",
+  "/boys_landing.jpg",
+  "girls_landing.jpg",
+  "/bb_academy.jpg",
   "/teachers_making_centum.jpg",
 ]
 
@@ -43,7 +45,7 @@ export function Hero() {
       ))}
 
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="absolute inset-0"></div>
 
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
