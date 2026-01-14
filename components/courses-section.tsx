@@ -1,5 +1,9 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
+import { useState } from "react"
 import { BookOpen, GraduationCap, School, Star, Trophy, Target, Sparkles } from "lucide-react"
+import { AdmissionFormDialog } from "@/components/admission-form"
 
 const courses = [
   {
@@ -62,6 +66,8 @@ const features = [
 ]
 
 export function CoursesSection() {
+  const [admissionOpen, setAdmissionOpen] = useState(false)
+  
   return (
     <section className="py-20 bg-white relative overflow-hidden">
       {/* Decorative blob */}
@@ -102,7 +108,10 @@ export function CoursesSection() {
           ))}
 
           {/* 'Join Now' Call to Action Card */}
-          <Card className="border-2 border-dashed border-gray-300 hover:border-academy-orange hover:bg-orange-50 transition-all duration-300 flex items-center justify-center min-h-[160px] cursor-pointer group animate-fade-up delay-700">
+          <Card 
+            onClick={() => setAdmissionOpen(true)}
+            className="border-2 border-dashed border-gray-300 hover:border-academy-orange hover:bg-orange-50 transition-all duration-300 flex items-center justify-center min-h-[160px] cursor-pointer group animate-fade-up delay-700"
+          >
             <CardContent className="p-6 text-center">
               <h3 className="text-xl font-bold text-gray-400 group-hover:text-academy-orange transition-colors">Join Now -&gt;</h3>
             </CardContent>
@@ -113,6 +122,22 @@ export function CoursesSection() {
         <div className="text-center mb-16 animate-fade-up">
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-academy-black mb-6">Our Teaching Features</h2>
           <div className="w-24 h-1.5 bg-academy-orange mx-auto rounded-full"></div>
+        </div>
+
+        {/* YouTube Video Section */}
+        <div className="mb-16 flex justify-center animate-fade-up">
+          <div className="w-full max-w-4xl">
+            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+              <iframe
+                className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                src="https://www.youtube.com/embed/dBiQcvPAKjg?si=L65SqT4yyp7yJF5X"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -134,6 +159,7 @@ export function CoursesSection() {
             </Card>
           ))}
         </div>
+        <AdmissionFormDialog open={admissionOpen} onOpenChange={setAdmissionOpen} />
       </div>
     </section>
   )

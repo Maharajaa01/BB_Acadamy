@@ -1,5 +1,9 @@
+"use client"
+
 import Link from "next/link"
+import { useState } from "react"
 import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
+import { AdmissionFormDialog } from "@/components/admission-form"
 
 const quickLinks = [
   { name: "Home", href: "/" },
@@ -28,6 +32,7 @@ const socialLinks = [
 ]
 
 export function Footer() {
+  const [admissionOpen, setAdmissionOpen] = useState(false)
   return (
     <footer className="bg-academy-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -134,13 +139,17 @@ export function Footer() {
               <Link href="#" className="hover:text-academy-orange transition-colors">
                 Terms of Service
               </Link>
-              <Link href="#" className="hover:text-academy-orange transition-colors">
+              <button 
+                onClick={() => setAdmissionOpen(true)}
+                className="hover:text-academy-orange transition-colors cursor-pointer"
+              >
                 Admissions
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
+      <AdmissionFormDialog open={admissionOpen} onOpenChange={setAdmissionOpen} />
     </footer>
   )
 }
