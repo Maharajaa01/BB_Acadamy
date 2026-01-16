@@ -3,6 +3,7 @@ import { HighlightCards } from "@/components/highlight-cards"
 import { AboutSection } from "@/components/about-section"
 import { StatsSection } from "@/components/stats-section"
 import { CoursesSection } from "@/components/courses-section"
+import { GoogleReviews } from "@/components/google-reviews"
 import { ScrollToTop } from "@/components/scroll-to-top"
 
 export default function HomePage() {
@@ -13,6 +14,7 @@ export default function HomePage() {
       <div id="about">
         <AboutSection />
       </div>
+      <GoogleReviews />
       <StatsSection />
       <div id="courses">
         <CoursesSection />
@@ -21,3 +23,4 @@ export default function HomePage() {
     </div>
   )
 }
+
