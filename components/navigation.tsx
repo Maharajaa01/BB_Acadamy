@@ -7,14 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { AdmissionFormDialog } from "@/components/admission-form";
+import { Home, Users, BookOpen, Image, Briefcase, Phone } from "lucide-react";
 
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "About Us", href: "/about" },
-  { name: "Notes", href: "/notes" },
-  { name: "Gallery", href: "/gallery" },
-  { name: "Career", href: "/career" },
-  { name: "Contact", href: "/contact" },
+  { name: "Home", href: "/", icon: Home },
+  { name: "About Us", href: "/about", icon: Users },
+  { name: "Notes", href: "/notes", icon: BookOpen },
+  { name: "Gallery", href: "/gallery", icon: Image },
+  { name: "Career", href: "/career", icon: Briefcase },
+  { name: "Contact", href: "/contact", icon: Phone },
 ];
 
 export function Navigation() {
@@ -58,23 +59,27 @@ export function Navigation() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-academy-orange relative",
-                  pathname === item.href ? "text-academy-orange" : "text-white"
-                )}
-              >
-                {item.name}
-                {pathname === item.href && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-academy-orange" />
-                )}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "text-sm font-medium transition-all duration-300 hover:text-academy-orange relative flex items-center gap-2 group",
+                    pathname === item.href ? "text-academy-orange" : "text-white"
+                  )}
+                >
+                  <Icon className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                  <span>{item.name}</span>
+                  {pathname === item.href && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-academy-orange" />
+                  )}
+                </Link>
+              );
+            })}
             <Button
-              className="bg-academy-orange hover:bg-orange-600 text-white"
+              className="bg-academy-orange hover:bg-academy-orange/90 text-white font-bold transition-all duration-300 hover:scale-105"
               onClick={() => setAdmissionOpen(true)}
             >
               Get Started
@@ -103,19 +108,23 @@ export function Navigation() {
 
                 {/* Centered menu items */}
                 <div className="flex flex-col items-center space-y-5 mt-8">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className={cn(
-                        "w-full text-center text-lg font-medium transition-colors hover:text-academy-orange pb-2 border-b border-gray-800",
-                        pathname === item.href ? "text-academy-orange" : "text-white"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {navItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={cn(
+                          "w-full flex items-center justify-center gap-3 text-lg font-medium transition-colors hover:text-academy-orange pb-2 border-b border-gray-800",
+                          pathname === item.href ? "text-academy-orange" : "text-white"
+                        )}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
 
                   {/* Contact info */}
                   <div className="pt-6 space-y-3 text-sm text-center text-gray-300">
@@ -131,7 +140,7 @@ export function Navigation() {
 
                   {/* CTA Button */}
                   <Button
-                    className="w-full bg-academy-orange hover:bg-orange-600 text-white text-lg mt-6"
+                    className="w-full bg-academy-orange hover:bg-academy-orange/90 text-white text-lg mt-6"
                     onClick={() => {
                       setIsOpen(false);
                       setAdmissionOpen(true);

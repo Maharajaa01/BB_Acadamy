@@ -9,6 +9,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Star, Quote, ExternalLink } from "lucide-react"
 import reviewsData from "@/lib/data/reviews.json"
 
@@ -72,9 +73,13 @@ export function GoogleReviews() {
                                             </p>
 
                                             <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-100">
-                                                <div className="w-12 h-12 rounded-full bg-academy-orange/10 flex items-center justify-center text-academy-orange font-bold text-xl uppercase">
-                                                    {review.author.charAt(0)}
-                                                </div>
+                                                <Avatar className="w-12 h-12 border-2 border-white shadow-sm">
+                                                    <AvatarImage src={review.profile_image_url} alt={review.author} />
+                                                    <AvatarFallback className="bg-academy-orange/10 text-academy-orange font-bold text-lg">
+                                                        {review.author.charAt(0)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+
                                                 <div>
                                                     <h4 className="font-bold text-academy-black">{review.author}</h4>
                                                     <p className="text-sm text-gray-400">{review.relative_time}</p>
@@ -105,3 +110,4 @@ export function GoogleReviews() {
         </section>
     )
 }
+
