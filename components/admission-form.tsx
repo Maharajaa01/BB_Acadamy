@@ -18,17 +18,20 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 
+export type AdmissionCategory = "Foundation" | "Public Exam" | "All"
+
 type Props = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  category?: AdmissionCategory
 }
 
-const standards = ["8th", "9th", "10th", "11th", "12th"] as const
-const groups = ["Science", "Commerce", "Arts"] as const
+const allStandards = ["6th", "7th", "8th", "9th", "10th", "11th", "12th"] as const
 
-export function AdmissionFormDialog({ open, onOpenChange }: Props) {
+export function AdmissionFormDialog({ open, onOpenChange, category = "All" }: Props) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [availableGroups, setAvailableGroups] = useState<string[]>([])
 
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
@@ -38,6 +41,42 @@ export function AdmissionFormDialog({ open, onOpenChange }: Props) {
   const [message, setMessage] = useState("")
 
   const showGroup = useMemo(() => standard === "11th" || standard === "12th", [standard])
+
+  const filteredStandards = useMemo(() => {
+    if (category === "Foundation") return ["6th", "7th", "8th", "9th"]
+    if (category === "Public Exam") return ["10th", "11th", "12th"]
+    return allStandards
+  }, [category])
+
+  useEffect(() => {
+    if (standard && !filteredStandards.includes(standard as any)) {
+      setStandard("")
+    }
+  }, [filteredStandards, standard])
+
+  useEffect(() => {
+    async function fetchGroups() {
+      try {
+        const params = new URLSearchParams({
+          fields: JSON.stringify(["subject_group_name"]),
+          limit_page_length: "100"
+        })
+        const token = process.env.NEXT_PUBLIC_FRAPPE_API_TOKEN
+        const headers: Record<string, string> = { "Content-Type": "application/json" }
+        if (token) headers["Authorization"] = `token ${token}`
+
+        const res = await fetch(`/api/resource/Subject Group?${params}`, { headers })
+        if (res.ok) {
+          const data = await res.json()
+          const fetchedGroups = (data.data || []).map((g: any) => g.subject_group_name)
+          setAvailableGroups(fetchedGroups)
+        }
+      } catch (err) {
+        console.error("Failed to fetch groups:", err)
+      }
+    }
+    fetchGroups()
+  }, [])
 
   useEffect(() => {
     if (!showGroup) setGroup("")
@@ -135,7 +174,7 @@ export function AdmissionFormDialog({ open, onOpenChange }: Props) {
                   <SelectValue placeholder="Select standard" />
                 </SelectTrigger>
                 <SelectContent>
-                  {standards.map((s) => (
+                  {filteredStandards.map((s) => (
                     <SelectItem key={s} value={s}>
                       {s}
                     </SelectItem>
@@ -152,7 +191,7 @@ export function AdmissionFormDialog({ open, onOpenChange }: Props) {
                     <SelectValue placeholder="Select group" />
                   </SelectTrigger>
                   <SelectContent>
-                    {groups.map((g) => (
+                    {availableGroups.map((g) => (
                       <SelectItem key={g} value={g}>
                         {g}
                       </SelectItem>
@@ -178,7 +217,7 @@ export function AdmissionFormDialog({ open, onOpenChange }: Props) {
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} className="mr-2">
               Cancel
             </Button>
-            <Button type="submit" className="bg-academy-orange hover:bg-orange-600 text-white" disabled={loading}>
+            <Button type="submit" className="bg-academy-orange hover:bg-[#FFB902] text-white" disabled={loading}>
               {loading ? "Submitting..." : "Submit Application"}
             </Button>
           </DialogFooter>

@@ -240,6 +240,20 @@ html {
   animation: scaleIn 0.5s ease-out forwards;
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    /* Translate left by 50% since we duplicate the list */
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+
 /* Stagger delays */
 .delay-100 {
   animation-delay: 100ms;

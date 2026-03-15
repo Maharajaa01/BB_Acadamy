@@ -9,7 +9,9 @@ export function ScrollToTop() {
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      if (docHeight > 0 && scrollY > docHeight / 2) {
         setIsVisible(true)
       } else {
         setIsVisible(false)
@@ -35,7 +37,7 @@ export function ScrollToTop() {
   return (
     <Button
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-50 bg-academy-orange hover:bg-orange-600 text-white shadow-lg"
+      className="fixed bottom-28 right-6 z-50 bg-academy-orange hover:bg-[#FFB902] text-white shadow-lg"
       size="icon"
     >
       <ArrowUp className="h-4 w-4" />

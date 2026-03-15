@@ -6,10 +6,8 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 
 const carouselImages = [
-  "/students-group-study-session-classroom.jpg",
-  // "/students-receiving-awards-ceremony.jpg",
   "/boys_landing.jpg",
-  "girls_landing.jpg",
+  "/girls_landing.jpg",
   "/bb_academy.jpg",
   "/teachers_making_centum.jpg",
 ]
@@ -26,7 +24,7 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="bg-academy-black text-white py-20 lg:py-32 relative overflow-hidden">
+    <section className="bg-academy-black text-white py-20 lg:py-32 min-h-[60vh] md:min-h-[80vh] flex flex-col justify-center items-center relative overflow-hidden">
       {/* Carousel Background Images */}
       {carouselImages.map((image, index) => (
         <div
@@ -38,7 +36,7 @@ export function Hero() {
             src={image}
             alt={`Slide ${index + 1}`}
             fill
-            className="object-cover"
+            className="object-cover object-center w-full h-full"
             priority={index === 0}
           />
         </div>
@@ -59,7 +57,7 @@ export function Hero() {
         </h1>
 
         <p className="text-xl md:text-2xl lg:text-3xl mb-4 text-academy-orange font-semibold animate-fade-up delay-100">
-          10+ Years of Excellence in State Board 10th & 12th Exams
+          Education is the most powerful weapon which you can use to change the world
         </p>
 
         <p className="text-lg md:text-xl lg:text-2xl mb-8 text-gray-300 max-w-4xl mx-auto text-balance animate-fade-up delay-200">
@@ -70,7 +68,7 @@ export function Hero() {
           <Link href="/notes">
             <Button
               size="lg"
-              className="bg-academy-orange hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,107,0,0.5)]"
+              className="bg-academy-orange hover:bg-[#FFB902] text-white px-8 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,107,0,0.5)]"
             >
               View Notes
             </Button>

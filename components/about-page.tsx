@@ -13,7 +13,7 @@ export function AboutPage() {
             <section className="relative py-20 overflow-hidden bg-academy-black text-white">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-academy-orange/20 via-transparent to-transparent"></div>
                 <div className="container mx-auto px-4 relative z-10 text-center">
-                    <Badge className="mb-6 bg-academy-orange hover:bg-orange-600 text-white border-none px-4 py-1 text-sm animate-fade-up">
+                    <Badge className="mb-6 bg-academy-orange hover:bg-[#FFB902] text-white border-none px-4 py-1 text-sm animate-fade-up">
                         Since 2016
                     </Badge>
                     <h1 className="text-4xl md:text-6xl font-heading font-bold mb-6 text-balance animate-fade-up delay-100">

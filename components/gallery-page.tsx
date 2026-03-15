@@ -24,19 +24,20 @@ export function GalleryPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-const showNextImage = () => {
-  if (!selectedImage) return
-  const currentIndex = images.findIndex(img => img.id === selectedImage.id)
-  const nextIndex = (currentIndex + 1) % images.length // loop back to first
-  setSelectedImage(images[nextIndex])
-}
+  const [selectedCategory, setSelectedCategory] = useState<string>("All")
+  const showNextImage = () => {
+    if (!selectedImage) return
+    const currentIndex = images.findIndex(img => img.id === selectedImage.id)
+    const nextIndex = (currentIndex + 1) % images.length // loop back to first
+    setSelectedImage(images[nextIndex])
+  }
 
-const showPrevImage = () => {
-  if (!selectedImage) return
-  const currentIndex = images.findIndex(img => img.id === selectedImage.id)
-  const prevIndex = (currentIndex - 1 + images.length) % images.length // loop back to last
-  setSelectedImage(images[prevIndex])
-}
+  const showPrevImage = () => {
+    if (!selectedImage) return
+    const currentIndex = images.findIndex(img => img.id === selectedImage.id)
+    const prevIndex = (currentIndex - 1 + images.length) % images.length // loop back to last
+    setSelectedImage(images[prevIndex])
+  }
 
   const fetchImages = async () => {
     setLoading(true)
@@ -44,7 +45,7 @@ const showPrevImage = () => {
 
     try {
       const apiBase = typeof window !== "undefined" ? window.location.origin : "";
-const response = await fetch(`${apiBase}/api/resource/Gallery`);
+      const response = await fetch(`${apiBase}/api/resource/Gallery`);
 
 
       if (!response.ok) {
@@ -124,17 +125,8 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
         },
         {
           id: "8",
-          title: "Parent-Teacher Meeting",
-          url: "/parents-teachers-meeting-classroom-discussion.jpg",
-          thumbnail: "/parents-teachers-meeting-classroom-discussion.jpg",
-          description: "Productive discussion between parents and teachers",
-          date: "2024-07-05",
-          category: "Meetings",
-        },
-        {
-          id: "9",
           title: "Graduation Ceremony",
-         
+
           url: "/2025_12th_students.jpeg",
           thumbnail: "/2025_12th_students.jpeg",
           description: "Celebrating our graduating students' achievements",
@@ -193,44 +185,66 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
           </Card>
         )}
 
+        {/* Category Filter */}
+        {!loading && !error && images.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {["All", ...Array.from(new Set(images.map((img) => img.category).filter(Boolean)))].map((cat) => (
+              <Button
+                key={cat}
+                onClick={() => setSelectedCategory(cat as string)}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                className={
+                  selectedCategory === cat
+                    ? "bg-academy-orange hover:bg-academy-orange/90 text-white border-academy-orange"
+                    : "border-academy-orange text-academy-orange hover:bg-academy-orange/10"
+                }
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+        )}
+
         {/* Gallery Grid */}
         {!loading && !error && images.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {images.map((image) => (
-              <Card
-                key={image.id}
-                className="group border-2 border-gray-200 hover:border-academy-orange transition-all duration-300 cursor-pointer overflow-hidden"
-                onClick={() => openModal(image)}
-              >
-                <div className="relative overflow-hidden">
-                  <Image
-                    src={image.thumbnail || "/placeholder.svg"}
-                    alt={image.title}
-                    width={400}
-                    height={300}
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-academy-orange/0 group-hover:bg-academy-orange/20 transition-all duration-300 flex items-center justify-center">
-                    <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {images
+              .filter((img) => selectedCategory === "All" || img.category === selectedCategory)
+              .map((image) => (
+                <Card
+                  key={image.id}
+                  className="group border-2 border-gray-200 hover:border-academy-orange transition-all duration-300 cursor-pointer overflow-hidden"
+                  onClick={() => openModal(image)}
+                >
+                  <div className="relative overflow-hidden">
+                    <Image
+                      src={image.thumbnail || "/placeholder.svg"}
+                      alt={image.title}
+                      width={400}
+                      height={300}
+                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-academy-orange/0 group-hover:bg-academy-orange/20 transition-all duration-300 flex items-center justify-center">
+                      <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    {image.category && (
+                      <div className="absolute top-2 left-2 bg-academy-orange text-white px-2 py-1 rounded text-xs font-medium">
+                        {image.category}
+                      </div>
+                    )}
                   </div>
-                  {image.category && (
-                    <div className="absolute top-2 left-2 bg-academy-orange text-white px-2 py-1 rounded text-xs font-medium">
-                      {image.category}
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-academy-black mb-2 text-balance">{image.title}</h3>
-                  {image.description && <p className="text-sm text-gray-600 mb-2 text-pretty">{image.description}</p>}
-                  {image.date && (
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(image.date).toLocaleDateString()}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-academy-black mb-2 text-balance">{image.title}</h3>
+                    {image.description && <p className="text-sm text-gray-600 mb-2 text-pretty">{image.description}</p>}
+                    {image.date && (
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(image.date).toLocaleDateString()}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         )}
 
@@ -283,28 +297,33 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
                   </div>
                 </div>
                 {/* Previous Button */}
-<Button
-  onClick={showPrevImage}
-  variant="ghost"
-  size="icon"
-  className="absolute top-1/2 left-4 -translate-y-1/2 h-12 w-12 rounded-full bg-white/70 backdrop-blur-md shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-transform"
->
-  <ChevronLeft className="h-6 w-6 text-gray-800" />
-</Button>
+                <Button
+                  onClick={showPrevImage}
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 left-4 -translate-y-1/2 h-12 w-12 rounded-full bg-white/70 backdrop-blur-md shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-transform"
+                >
+                  <ChevronLeft className="h-6 w-6 text-gray-800" />
+                </Button>
 
-{/* Next Button */}
-<Button
-  onClick={showNextImage}
-  variant="ghost"
-  size="icon"
-  className="absolute top-1/2 right-4 -translate-y-1/2 h-12 w-12 rounded-full bg-white/70 backdrop-blur-md shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-transform"
->
-  <ChevronRight className="h-6 w-6 text-gray-800" />
-</Button>
-
-                {/* <Button onClick={closeModal} variant="ghost" size="sm" className="absolute top-4 right-4 h-8 w-8 p-0"> */}
-                  {/* <X className="h-4 w-4" />
-                </Button> */}
+                {/* Next Button */}
+                <Button
+                  onClick={showNextImage}
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 right-4 -translate-y-1/2 h-12 w-12 rounded-full bg-white/70 backdrop-blur-md shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-transform"
+                >
+                  <ChevronRight className="h-6 w-6 text-gray-800" />
+                </Button>
+                {/* Close Button */}
+                <Button
+                  onClick={() => { setIsModalOpen(false); setSelectedImage(null); }}
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-4 right-4 h-8 w-8 p-0 z-10 bg-white/70 backdrop-blur-md rounded-full shadow hover:bg-white"
+                >
+                  <X className="h-4 w-4 text-gray-800" />
+                </Button>
               </>
             )}
           </DialogContent>
@@ -313,3 +332,4 @@ const response = await fetch(`${apiBase}/api/resource/Gallery`);
     </div>
   )
 }
+

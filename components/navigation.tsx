@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { AdmissionFormDialog } from "@/components/admission-form";
-import { Home, Users, BookOpen, Image, Briefcase, Phone } from "lucide-react";
+import { Home, Users, BookOpen, Image as LucideImage, Briefcase, Phone } from "lucide-react";
 
 const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "About Us", href: "/about", icon: Users },
   { name: "Notes", href: "/notes", icon: BookOpen },
-  { name: "Gallery", href: "/gallery", icon: Image },
+  { name: "Gallery", href: "/gallery", icon: LucideImage },
   { name: "Career", href: "/career", icon: Briefcase },
   { name: "Contact", href: "/contact", icon: Phone },
 ];
@@ -49,12 +50,15 @@ export function Navigation() {
       {/* Main nav */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo image */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="text-xl font-bold">
-              <span className="text-white">Black Building</span>
-              <span className="text-academy-orange"> Academy</span>
-            </div>
+            <Image
+              src="/LOGO_BB_ACADEMY.jpeg"
+              alt="Black Building Academy logo"
+              width={48}
+              height={48}
+              className="object-contain"
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -100,10 +104,15 @@ export function Navigation() {
                 className="bg-academy-black text-white border-gray-800 px-6 pt-6"
               >
                 <SheetHeader>
-                  <SheetTitle className="text-center text-xl font-bold">
-                    <span className="text-white">Black Building</span>
-                    <span className="text-academy-orange"> Academy</span>
-                  </SheetTitle>
+                  <SheetTitle className="text-center text-xl font-bold flex justify-center">
+                  <Image
+                    src="/LOGO_BB_ACADEMY.jpeg"
+                    alt="Black Building Academy logo"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
+                </SheetTitle>
                 </SheetHeader>
 
                 {/* Centered menu items */}

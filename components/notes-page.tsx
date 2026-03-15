@@ -47,11 +47,6 @@ const standards = [
   { value: "12", label: "12th Standard" },
 ]
 
-const groups = [
-  { value: "science", label: "Science Group" },
-  { value: "commerce", label: "Accounts/Commerce Group" },
-]
-
 
 
 const examTypes = [
@@ -80,6 +75,7 @@ export function NotesPage() {
 
   // Subject State
   const [availableSubjects, setAvailableSubjects] = useState<string[]>([])
+  const [availableGroups, setAvailableGroups] = useState<{ value: string, label: string }[]>([])
 
   // Question Papers State
   const [questionPapers, setQuestionPapers] = useState<QuestionPaper[]>([])
@@ -123,7 +119,7 @@ export function NotesPage() {
 
   useEffect(() => {
     fetchSubjects()
-  }, [selectedStandard]) // Re-fetch subjects when standard changes
+  }, [selectedStandard, selectedGroup]) // Re-fetch subjects when standard or group changes
 
   useEffect(() => {
     fetchNotes()
@@ -139,10 +135,17 @@ export function NotesPage() {
       return
     }
     try {
-      // Fetch subjects filtered by standard
-      const filters = [["standard", "=", selectedStandard]]
+      // Fetch subjects by applying a child table filter on the "Standard Detail" table via the Subject DocType
+      const filters: any[] = [
+        ["Standard Detail", "standard", "=", selectedStandard]
+      ]
+
+      if ((selectedStandard === "11" || selectedStandard === "12") && selectedGroup) {
+        filters.push(["Subject Group Detail", "group", "=", selectedGroup])
+      }
+
       const params = new URLSearchParams({
-        fields: JSON.stringify(["subject_name"]), // Fetch subject_name
+        fields: JSON.stringify(["subject_name"]),
         filters: JSON.stringify(filters),
         limit_page_length: "100"
       })
@@ -159,6 +162,31 @@ export function NotesPage() {
       console.error("Failed to fetch subjects:", error)
     }
   }
+
+  useEffect(() => {
+    async function fetchGroups() {
+      try {
+        const params = new URLSearchParams({
+          fields: JSON.stringify(["name", "subject_group_name"]),
+          limit_page_length: "100"
+        })
+        const response = await fetch(`/api/resource/Subject Group?${params}`, {
+          headers: getHeaders()
+        })
+        if (response.ok) {
+          const data = await response.json()
+          const fetchedGroups = (data.data || []).map((g: any) => ({
+            value: g.name,
+            label: g.subject_group_name || g.name
+          }))
+          setAvailableGroups(fetchedGroups)
+        }
+      } catch (error) {
+        console.error("Failed to fetch groups:", error)
+      }
+    }
+    fetchGroups()
+  }, [])
 
   // Reset page when filters change
   useEffect(() => {
@@ -188,7 +216,7 @@ export function NotesPage() {
       }
 
       if (selectedGroup) {
-        filters.push(["group", "=", selectedGroup])
+        filters.push(["Subject Group Detail", "group", "=", selectedGroup])
       }
 
       const params = new URLSearchParams({
@@ -196,7 +224,7 @@ export function NotesPage() {
         filters: JSON.stringify(filters),
         limit_page_length: ITEMS_PER_PAGE.toString(),
         limit_start: ((notesPage - 1) * ITEMS_PER_PAGE).toString(),
-        order_by: "creation desc"
+        order_by: "`tabStudy Material`.creation desc"
       })
 
       const response = await fetch(`/api/resource/Study Material?${params}`, {
@@ -258,7 +286,7 @@ export function NotesPage() {
         filters: JSON.stringify(filters),
         limit_page_length: ITEMS_PER_PAGE.toString(),
         limit_start: ((qpPage - 1) * ITEMS_PER_PAGE).toString(),
-        order_by: "year desc"
+        order_by: "`tabStudy Material`.year desc"
       })
 
       const response = await fetch(`/api/resource/Study Material?${params}`, {
@@ -314,13 +342,13 @@ export function NotesPage() {
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-14 bg-white shadow-xl rounded-full p-1 mb-12 animate-fade-up delay-200">
             <TabsTrigger
               value="notes"
-              className="rounded-full text-base font-medium data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
+              className="rounded-full text-base font-medium data-[state=active]:bg-[#FFB902] data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
             >
               Notes
             </TabsTrigger>
             <TabsTrigger
               value="question-papers"
-              className="rounded-full text-base font-medium data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
+              className="rounded-full text-base font-medium data-[state=active]:bg-[#FFB902] data-[state=active]:text-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
             >
               Question Papers
             </TabsTrigger>
@@ -354,7 +382,7 @@ export function NotesPage() {
                           <SelectValue placeholder="Select Group" />
                         </SelectTrigger>
                         <SelectContent>
-                          {groups.map((g) => (
+                          {availableGroups.map((g) => (
                             <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
                           ))}
                         </SelectContent>

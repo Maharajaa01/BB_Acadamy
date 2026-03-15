@@ -12,19 +12,31 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Star, Quote, ExternalLink } from "lucide-react"
 import reviewsData from "@/lib/data/reviews.json"
+import { type CarouselApi } from "@/components/ui/carousel"
+import AutoScroll from "embla-carousel-auto-scroll"
 
 export function GoogleReviews() {
     // Filter reviews with more than 3 stars
     const filteredReviews = reviewsData.filter((review) => review.rating > 3)
+    const [api, setApi] = React.useState<CarouselApi>()
+
+    // Use Embla AutoScroll plugin for continuous smooth scrolling
+    const plugin = React.useMemo(() => {
+        return AutoScroll({
+            speed: 1,
+            stopOnInteraction: false,
+            stopOnMouseEnter: true
+        })
+    }, [])
 
     return (
-        <section className="py-24 bg-gray-50 relative overflow-hidden">
+        <section className="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
             {/* Background decorations */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-academy-orange/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 -z-10"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 -z-10"></div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16 animate-fade-up">
+                <div className="text-center mb-12 animate-fade-up">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-gray-100 mb-6 group hover:border-academy-orange transition-colors duration-300">
                         <div className="flex text-yellow-500">
                             {[...Array(5)].map((_, i) => (
@@ -43,46 +55,51 @@ export function GoogleReviews() {
                     <div className="w-24 h-1.5 bg-academy-orange mx-auto mt-6 rounded-full"></div>
                 </div>
 
-                <div className="relative px-12">
+                <div
+                    className="relative px-4 sm:px-12"
+                >
                     <Carousel
+                        setApi={setApi}
                         opts={{
                             align: "start",
                             loop: true,
+                            dragFree: true,
                         }}
-                        className="w-full"
+                        plugins={[plugin as any]}
+                        className="w-full pb-8 pt-4"
                     >
-                        <CarouselContent className="-ml-4">
+                        <CarouselContent className="-ml-2 sm:-ml-4">
                             {filteredReviews.map((review, index) => (
-                                <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                                    <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white group">
-                                        <CardContent className="p-8 flex flex-col h-full relative">
-                                            <Quote className="absolute top-6 right-8 w-10 h-10 text-gray-100 group-hover:text-academy-orange/10 transition-colors duration-300" />
+                                <CarouselItem key={index} className="pl-2 sm:pl-4 basis-[80%] sm:basis-[50%] md:basis-[40%] lg:basis-[30%]">
+                                    <Card className="h-full border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 bg-white group hover:-translate-y-1 rounded-2xl">
+                                        <CardContent className="p-5 sm:p-6 flex flex-col h-full relative">
+                                            <Quote className="absolute top-5 right-6 w-8 h-8 text-gray-100 group-hover:text-academy-orange/10 transition-colors duration-300" />
 
-                                            <div className="flex gap-1 mb-4">
+                                            <div className="flex gap-1 mb-3">
                                                 {[...Array(5)].map((_, i) => (
                                                     <Star
                                                         key={i}
-                                                        className={`w-4 h-4 ${i < review.rating ? "text-yellow-500 fill-current" : "text-gray-200"
+                                                        className={`w-3.5 h-3.5 ${i < review.rating ? "text-yellow-500 fill-current" : "text-gray-200"
                                                             }`}
                                                     />
                                                 ))}
                                             </div>
 
-                                            <p className="text-gray-600 mb-8 italic leading-relaxed flex-grow line-clamp-6 group-hover:line-clamp-none transition-all duration-300">
+                                            <p className="text-sm text-gray-600 mb-6 italic leading-relaxed flex-grow line-clamp-6 group-hover:line-clamp-none transition-all duration-300">
                                                 "{review.review_text}"
                                             </p>
 
-                                            <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-100">
-                                                <Avatar className="w-12 h-12 border-2 border-white shadow-sm">
+                                            <div className="flex items-center gap-3 mt-auto pt-4 border-t border-gray-50">
+                                                <Avatar className="w-10 h-10 border-2 border-white shadow-sm">
                                                     <AvatarImage src={review.profile_image_url} alt={review.author} />
-                                                    <AvatarFallback className="bg-academy-orange/10 text-academy-orange font-bold text-lg">
+                                                    <AvatarFallback className="bg-academy-orange/10 text-academy-orange font-bold text-sm">
                                                         {review.author.charAt(0)}
                                                     </AvatarFallback>
                                                 </Avatar>
 
                                                 <div>
-                                                    <h4 className="font-bold text-academy-black">{review.author}</h4>
-                                                    <p className="text-sm text-gray-400">{review.relative_time}</p>
+                                                    <h4 className="font-bold text-sm text-academy-black">{review.author}</h4>
+                                                    <p className="text-xs text-gray-400">{review.relative_time}</p>
                                                 </div>
                                             </div>
                                         </CardContent>
@@ -100,10 +117,14 @@ export function GoogleReviews() {
                         href="https://maps.app.goo.gl/Jv1JX2fdoHhFjA359"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-academy-orange text-academy-orange font-bold rounded-full hover:bg-academy-orange hover:text-white transition-all duration-300"
+                        className="inline-flex items-center gap-2 px-6 py-3 
+                bg-white border-2 border-[#FFB902] 
+                text-[#FFB902] font-bold rounded-full 
+                hover:bg-academy-orange hover:text-white 
+                transition-all duration-300"
                     >
                         <span>Read more reviews on Google Maps</span>
-                        <ExternalLink className="w-4 h-4" />
+                        <ExternalLink className="w-4 h-4 text-current" />
                     </a>
                 </div>
             </div>

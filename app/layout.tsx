@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Black Building Academy" }],
   creator: "Black Building Academy",
   metadataBase: new URL("https://bbacademy.com"),
+  icons: {
+    icon: "/LOGO_BB_ACADEMY.jpeg",
+    apple: "/LOGO_BB_ACADEMY.jpeg",
+    other: [
+      { rel: "icon", url: "/LOGO_BB_ACADEMY.jpeg" },
+      { rel: "shortcut icon", url: "/LOGO_BB_ACADEMY.jpeg" }
+    ]
+  },
   openGraph: {
     title: "Black Building Academy - Best Tuition Center in Chennai",
     description: "10+ years of excellence in State Board 10th & 12th exams. 100% pass guarantee with top rank holders.",

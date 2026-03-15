@@ -69,15 +69,6 @@ const mockImages = [
   },
   {
     id: "8",
-    title: "Parent-Teacher Meeting",
-    url: "/parents-teachers-meeting-classroom-discussion.jpg",
-    thumbnail: "/parents-teachers-meeting-classroom-discussion.jpg",
-    description: "Productive discussion between parents and teachers",
-    date: "2024-07-05",
-    category: "Meetings",
-  },
-  {
-    id: "9",
     title: "Graduation Ceremony",
     url: "/2025_12th_students.jpeg",
     thumbnail: "/2025_12th_students.jpeg",

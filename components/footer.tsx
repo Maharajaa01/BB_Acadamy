@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+
 import Link from "next/link"
 import { useState } from "react"
 import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
@@ -15,13 +17,8 @@ const quickLinks = [
 ]
 
 const courses = [
-  { name: "VI Standard", href: "/notes" },
-  { name: "VII Standard", href: "/notes" },
-  { name: "VIII Standard", href: "/notes" },
-  { name: "IX Standard", href: "/notes" },
-  { name: "X Standard", href: "/notes" },
-  { name: "XI Standard", href: "/notes" },
-  { name: "XII Standard", href: "/notes" },
+  { name: "Foundation (Classes 6-9)", href: "/#courses" },
+  { name: "Public Exam (Classes 10-12)", href: "/#courses" },
 ]
 
 const socialLinks = [
@@ -39,9 +36,18 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Academy Info */}
           <div className="space-y-4">
-            <div className="text-2xl font-bold">
-              <span className="text-white">Black Building</span>
-              <span className="text-academy-orange"> Academy</span>
+            <div className="flex items-center space-x-2">
+              <Image
+                src="/LOGO_BB_ACADEMY.jpeg"
+                alt="Black Building Academy logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <div className="text-2xl font-bold">
+                <span className="text-white">Black Building</span>
+                <span className="text-academy-orange"> Academy</span>
+              </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               Chennai's No.1 Tuition Center with 10+ years of excellence in State Board education. 100% pass guarantee
@@ -57,6 +63,17 @@ export function Footer() {
                   <social.icon className="h-5 w-5" />
                 </Link>
               ))}
+            </div>
+            {/* ISO certification badge */}
+            <div className="mt-4">
+              <Image
+
+                src="/iso_enhanced.jpg"
+                alt="ISO Certification"
+                width={100}
+                height={100}
+                className="object-contain"
+              />
             </div>
           </div>
 
@@ -98,7 +115,7 @@ export function Footer() {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-academy-orange flex-shrink-0 mt-0.5" />
                 <div className="text-gray-300 text-sm">
-                   
+
                   <p>10, Vivekananda Street,</p>
                   <p>MGR Nagar, Nesapakkam, Chennai</p>
                   <p>,Tamil Nadu 600078</p>
@@ -119,9 +136,8 @@ export function Footer() {
               <div className="flex items-start space-x-3">
                 <Clock className="h-5 w-5 text-academy-orange flex-shrink-0 mt-0.5" />
                 <div className="text-gray-300 text-sm">
-                  <p>Mon - Fri: 8:00 AM - 8:00 PM</p>
-                  <p>Sat: 8:00 AM - 6:00 PM</p>
-                  <p>Sun: 9:00 AM - 2:00 PM</p>
+                  <p>Morning: 6:00 AM – 7:30 AM</p>
+                  <p>Evening: 4:30 PM – 10:00 PM</p>
                 </div>
               </div>
             </div>
@@ -139,7 +155,7 @@ export function Footer() {
               <Link href="#" className="hover:text-academy-orange transition-colors">
                 Terms of Service
               </Link>
-              <button 
+              <button
                 onClick={() => setAdmissionOpen(true)}
                 className="hover:text-academy-orange transition-colors cursor-pointer"
               >

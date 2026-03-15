@@ -187,7 +187,7 @@ export function ContactPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-academy-orange hover:bg-orange-600 text-white"
+                    className="w-full bg-academy-orange hover:bg-[#FFB902] text-white"
                   >
                     {isSubmitting ? (
                       <>
