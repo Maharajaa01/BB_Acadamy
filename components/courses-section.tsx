@@ -2,10 +2,10 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { useState } from "react"
-import { 
+import {
   BookOpen, GraduationCap, School, Star, Trophy, Target, Sparkles, Download,
-  Languages, BookA, MessageCircle, Calculator, Atom, FlaskConical, Dna, 
-  Monitor, BarChart, Home, Microscope, TestTube, HeartPulse, Leaf, 
+  Languages, BookA, MessageCircle, Calculator, Atom, FlaskConical, Dna,
+  Monitor, BarChart, Home, Microscope, TestTube, HeartPulse, Leaf,
   TrendingUp, Briefcase, Landmark, Globe, PieChart, Map as MapIcon
 } from "lucide-react"
 import { AdmissionFormDialog, type AdmissionCategory } from "@/components/admission-form"
