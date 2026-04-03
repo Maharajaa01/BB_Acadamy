@@ -1,62 +1,67 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { X, ImageIcon, Calendar, Eye } from "lucide-react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { X, ImageIcon, Calendar, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 interface GalleryImage {
-  id: string
-  title: string
-  url: string
-  thumbnail: string
-  description?: string
-  date?: string
-  category?: string
+  id: string;
+  title: string;
+  url: string;
+  thumbnail: string;
+  description?: string;
+  date?: string;
+  category?: string;
 }
 
 export function GalleryPage() {
-  const [images, setImages] = useState<GalleryImage[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string>("All")
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const showNextImage = () => {
-    if (!selectedImage) return
-    const currentIndex = images.findIndex(img => img.id === selectedImage.id)
-    const nextIndex = (currentIndex + 1) % images.length // loop back to first
-    setSelectedImage(images[nextIndex])
-  }
+    if (!selectedImage) return;
+    const currentIndex = images.findIndex((img) => img.id === selectedImage.id);
+    const nextIndex = (currentIndex + 1) % images.length; // loop back to first
+    setSelectedImage(images[nextIndex]);
+  };
 
   const showPrevImage = () => {
-    if (!selectedImage) return
-    const currentIndex = images.findIndex(img => img.id === selectedImage.id)
-    const prevIndex = (currentIndex - 1 + images.length) % images.length // loop back to last
-    setSelectedImage(images[prevIndex])
-  }
+    if (!selectedImage) return;
+    const currentIndex = images.findIndex((img) => img.id === selectedImage.id);
+    const prevIndex = (currentIndex - 1 + images.length) % images.length; // loop back to last
+    setSelectedImage(images[prevIndex]);
+  };
 
   const fetchImages = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      const apiBase = typeof window !== "undefined" ? window.location.origin : "";
+      const apiBase =
+        typeof window !== "undefined" ? window.location.origin : "";
       const response = await fetch(`${apiBase}/api/resource/Gallery`);
 
-
       if (!response.ok) {
-        throw new Error("Failed to fetch gallery images")
+        throw new Error("Failed to fetch gallery images");
       }
 
-      const data = await response.json()
-      setImages(data.images || [])
+      const data = await response.json();
+      setImages(data.images || []);
     } catch (err) {
-      setError("Failed to load gallery images. Please try again.")
-      console.error("Error fetching gallery:", err)
+      setError("Failed to load gallery images. Please try again.");
+      console.error("Error fetching gallery:", err);
       // Mock data for demonstration
       setImages([
         {
@@ -73,7 +78,8 @@ export function GalleryPage() {
           title: "Top Rank Holders Recognition",
           url: "/boys_girls_price.jpg",
           thumbnail: "/boys_girls_price.jpg",
-          description: "Recognizing our top-performing students in board examinations",
+          description:
+            "Recognizing our top-performing students in board examinations",
           date: "2024-05-20",
           category: "Achievements",
         },
@@ -101,7 +107,8 @@ export function GalleryPage() {
           title: "Cultural Program",
           url: "/2025_12th_girls.jpeg",
           thumbnail: "/2025_12th_girls.jpeg",
-          description: "Students performing traditional dance during cultural program",
+          description:
+            "Students performing traditional dance during cultural program",
           date: "2024-04-08",
           category: "Cultural",
         },
@@ -133,36 +140,42 @@ export function GalleryPage() {
           date: "2024-05-30",
           category: "Graduation",
         },
-      ])
+      ]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchImages()
-  }, [])
+    fetchImages();
+  }, []);
 
   const openModal = (image: GalleryImage) => {
-    setSelectedImage(image)
-    setIsModalOpen(true)
-  }
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedImage(null)
-  }
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-10 md:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-academy-black mb-4">Gallery</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-balance">
-            Explore moments from our academy life, achievements, and memorable events
+        <div className="text-center mb-8 md:mb-10 animate-fade-up">
+          <p className="text-academy-orange font-semibold text-xs md:text-sm uppercase tracking-[0.18em] mb-2">
+            Memories
           </p>
-          <div className="w-24 h-1 bg-academy-orange mx-auto mt-4"></div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-academy-black mb-3">
+            Gallery
+          </h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto text-balance leading-relaxed">
+            Explore moments from our academy life, achievements, and memorable
+            events
+          </p>
+          <div className="w-20 h-1 bg-academy-orange mx-auto mt-4 rounded-full"></div>
         </div>
 
         {/* Loading State */}
@@ -178,7 +191,11 @@ export function GalleryPage() {
           <Card className="border-red-200 bg-red-50">
             <CardContent className="p-6 text-center">
               <p className="text-red-600">{error}</p>
-              <Button onClick={fetchImages} className="mt-4 bg-transparent" variant="outline">
+              <Button
+                onClick={fetchImages}
+                className="mt-4 bg-transparent"
+                variant="outline"
+              >
                 Try Again
               </Button>
             </CardContent>
@@ -187,8 +204,13 @@ export function GalleryPage() {
 
         {/* Category Filter */}
         {!loading && !error && images.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {["All", ...Array.from(new Set(images.map((img) => img.category).filter(Boolean)))].map((cat) => (
+          <div className="flex flex-wrap justify-center gap-2 mb-7 md:mb-8 animate-fade-up delay-100">
+            {[
+              "All",
+              ...Array.from(
+                new Set(images.map((img) => img.category).filter(Boolean)),
+              ),
+            ].map((cat) => (
               <Button
                 key={cat}
                 onClick={() => setSelectedCategory(cat as string)}
@@ -207,13 +229,18 @@ export function GalleryPage() {
 
         {/* Gallery Grid */}
         {!loading && !error && images.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 animate-fade-up delay-200">
             {images
-              .filter((img) => selectedCategory === "All" || img.category === selectedCategory)
-              .map((image) => (
+              .filter(
+                (img) =>
+                  selectedCategory === "All" ||
+                  img.category === selectedCategory,
+              )
+              .map((image, index) => (
                 <Card
                   key={image.id}
-                  className="group border-2 border-gray-200 hover:border-academy-orange transition-all duration-300 cursor-pointer overflow-hidden"
+                  className="group border border-gray-200 hover:border-academy-orange/50 transition-all duration-300 cursor-pointer overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1"
+                  style={{ animationDelay: `${index * 70}ms` }}
                   onClick={() => openModal(image)}
                 >
                   <div className="relative overflow-hidden">
@@ -233,9 +260,15 @@ export function GalleryPage() {
                       </div>
                     )}
                   </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-bold text-academy-black mb-2 text-balance">{image.title}</h3>
-                    {image.description && <p className="text-sm text-gray-600 mb-2 text-pretty">{image.description}</p>}
+                  <CardContent className="p-4 md:p-5">
+                    <h3 className="font-bold text-academy-black mb-2 text-base md:text-lg text-balance line-clamp-2">
+                      {image.title}
+                    </h3>
+                    {image.description && (
+                      <p className="text-sm text-gray-600 mb-3 text-pretty leading-relaxed line-clamp-2">
+                        {image.description}
+                      </p>
+                    )}
                     {image.date && (
                       <div className="flex items-center gap-1 text-xs text-gray-500">
                         <Calendar className="h-3 w-3" />
@@ -253,15 +286,19 @@ export function GalleryPage() {
           <Card className="border-gray-200">
             <CardContent className="p-12 text-center">
               <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Images Available</h3>
-              <p className="text-gray-600">Gallery images will be displayed here once they are uploaded.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No Images Available
+              </h3>
+              <p className="text-gray-600">
+                Gallery images will be displayed here once they are uploaded.
+              </p>
             </CardContent>
           </Card>
         )}
 
         {/* Image Preview Modal */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+          <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
             {selectedImage && (
               <>
                 <DialogHeader className="p-6 pb-0">
@@ -280,7 +317,9 @@ export function GalleryPage() {
                     />
                   </div>
                   {selectedImage.description && (
-                    <p className="text-gray-600 mb-4 text-pretty">{selectedImage.description}</p>
+                    <p className="text-gray-600 mb-4 text-pretty">
+                      {selectedImage.description}
+                    </p>
                   )}
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     {selectedImage.category && (
@@ -317,7 +356,10 @@ export function GalleryPage() {
                 </Button>
                 {/* Close Button */}
                 <Button
-                  onClick={() => { setIsModalOpen(false); setSelectedImage(null); }}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setSelectedImage(null);
+                  }}
                   variant="ghost"
                   size="sm"
                   className="absolute top-4 right-4 h-8 w-8 p-0 z-10 bg-white/70 backdrop-blur-md rounded-full shadow hover:bg-white"
@@ -330,6 +372,5 @@ export function GalleryPage() {
         </Dialog>
       </div>
     </div>
-  )
+  );
 }
-
