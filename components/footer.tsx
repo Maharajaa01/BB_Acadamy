@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import Image from "next/image"
+import Image from "next/image";
 
-import Link from "next/link"
-import { useState } from "react"
-import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
-import { AdmissionFormDialog } from "@/components/admission-form"
+import Link from "next/link";
+import { useState } from "react";
+import { MapPin, Phone, Mail, Clock, Globe, Camera, Video } from "lucide-react";
+import { AdmissionFormDialog } from "@/components/admission-form";
 
 const quickLinks = [
   { name: "Home", href: "/" },
@@ -14,22 +14,30 @@ const quickLinks = [
   { name: "Notes", href: "/notes" },
   { name: "Gallery", href: "/gallery" },
   { name: "Contact", href: "/contact" },
-]
+];
 
 const courses = [
   { name: "Foundation (Classes 6-9)", href: "/#courses" },
   { name: "Public Exam (Classes 10-12)", href: "/#courses" },
-]
+];
 
 const socialLinks = [
-  { name: "Facebook", href: "https://www.facebook.com/blackbuildingacademy/", icon: Facebook },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/blackbuildingacademy/",
+    icon: Globe,
+  },
   // { name: "Twitter", href: "#", icon: Twitter },
-  { name: "Instagram", href: "https://www.instagram.com/blackbuildingacademy/", icon: Instagram },
-  { name: "YouTube", href: "https://www.youtube.com/@bbacademy", icon: Youtube },
-]
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/blackbuildingacademy/",
+    icon: Camera,
+  },
+  { name: "YouTube", href: "https://www.youtube.com/@bbacademy", icon: Video },
+];
 
 export function Footer() {
-  const [admissionOpen, setAdmissionOpen] = useState(false)
+  const [admissionOpen, setAdmissionOpen] = useState(false);
   return (
     <footer className="bg-academy-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -50,8 +58,9 @@ export function Footer() {
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Chennai's No.1 Tuition Center with 10+ years of excellence in State Board education. 100% pass guarantee
-              with personalized learning approach.
+              Chennai's No.1 Tuition Center with 10+ years of excellence in
+              State Board education. 100% pass guarantee with personalized
+              learning approach.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
@@ -67,7 +76,6 @@ export function Footer() {
             {/* ISO certification badge */}
             <div className="mt-4">
               <Image
-
                 src="/iso_enhanced.jpg"
                 alt="ISO Certification"
                 width={100}
@@ -79,11 +87,16 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-academy-orange">Quick Links</h3>
+            <h3 className="text-lg font-semibold text-academy-orange">
+              Quick Links
+            </h3>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-gray-300 hover:text-academy-orange transition-colors text-sm">
+                  <Link
+                    href={link.href}
+                    className="text-gray-300 hover:text-academy-orange transition-colors text-sm"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -93,7 +106,9 @@ export function Footer() {
 
           {/* Courses */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-academy-orange">Our Courses</h3>
+            <h3 className="text-lg font-semibold text-academy-orange">
+              Our Courses
+            </h3>
             <ul className="space-y-2">
               {courses.map((course) => (
                 <li key={course.name}>
@@ -110,12 +125,13 @@ export function Footer() {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-academy-orange">Contact Info</h3>
+            <h3 className="text-lg font-semibold text-academy-orange">
+              Contact Info
+            </h3>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-academy-orange flex-shrink-0 mt-0.5" />
                 <div className="text-gray-300 text-sm">
-
                   <p>10, Vivekananda Street,</p>
                   <p>MGR Nagar, Nesapakkam, Chennai</p>
                   <p>,Tamil Nadu 600078</p>
@@ -147,12 +163,20 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <p className="text-sm text-gray-400">© 2025 Black Building Academy | All Rights Reserved.</p>
+            <p className="text-sm text-gray-400">
+              © 2025 Black Building Academy | All Rights Reserved.
+            </p>
             <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <Link href="#" className="hover:text-academy-orange transition-colors">
+              <Link
+                href="#"
+                className="hover:text-academy-orange transition-colors"
+              >
                 Privacy Policy
               </Link>
-              <Link href="#" className="hover:text-academy-orange transition-colors">
+              <Link
+                href="#"
+                className="hover:text-academy-orange transition-colors"
+              >
                 Terms of Service
               </Link>
               <button
@@ -165,7 +189,10 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <AdmissionFormDialog open={admissionOpen} onOpenChange={setAdmissionOpen} />
+      <AdmissionFormDialog
+        open={admissionOpen}
+        onOpenChange={setAdmissionOpen}
+      />
     </footer>
-  )
+  );
 }

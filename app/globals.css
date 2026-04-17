@@ -3,79 +3,68 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 html {
   scroll-behavior: smooth;
 }
 
 :root {
-  /* Custom color scheme for Black Building Academy */
   --background: oklch(1 0 0);
-  /* White */
-  --foreground: oklch(0 0 0);
-  /* Black */
+  --foreground: oklch(0.1 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0 0 0);
+  --card-foreground: oklch(0.1 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0.82 0.18 85);
-  /* Orange #FFB902 */
-  --primary-foreground: oklch(1 0 0);
-  /* White text on orange */
+  --popover-foreground: oklch(0.1 0 0);
+  --primary: oklch(0.78 0.19 72);
+  --primary-foreground: oklch(0.08 0 0);
   --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.4 0 0);
-  --accent: oklch(0.82 0.18 85);
-  /* Orange accent */
-  --accent-foreground: oklch(1 0 0);
+  --secondary-foreground: oklch(0.1 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.78 0.19 72);
+  --accent-foreground: oklch(0.08 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.95 0 0);
-  --ring: oklch(0.82 0.18 85);
-  /* Orange ring */
-  --chart-1: oklch(0.82 0.18 85);
-  --chart-2: oklch(0 0 0);
+  --border: oklch(0.91 0 0);
+  --input: oklch(0.94 0 0);
+  --ring: oklch(0.78 0.19 72);
+  --chart-1: oklch(0.78 0.19 72);
+  --chart-2: oklch(0.1 0 0);
   --chart-3: oklch(0.5 0 0);
   --chart-4: oklch(0.8 0 0);
   --chart-5: oklch(0.3 0 0);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0 0 0);
-  --sidebar-primary: oklch(0.82 0.18 85);
-  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.1 0 0);
+  --sidebar-primary: oklch(0.78 0.19 72);
+  --sidebar-primary-foreground: oklch(0.08 0 0);
   --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0 0 0);
-  --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0.82 0.18 85);
+  --sidebar-accent-foreground: oklch(0.1 0 0);
+  --sidebar-border: oklch(0.91 0 0);
+  --sidebar-ring: oklch(0.78 0.19 72);
 }
 
 .dark {
-  --background: oklch(0 0 0);
-  /* Black background */
-  --foreground: oklch(1 0 0);
-  /* White text */
-  --card: oklch(0.05 0 0);
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0.05 0 0);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(0.82 0.18 85);
-  /* Orange stays same */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.1 0 0);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.1 0 0);
+  --background: oklch(0.07 0 0);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.1 0 0);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.1 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.78 0.19 72);
+  --primary-foreground: oklch(0.08 0 0);
+  --secondary: oklch(0.14 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.14 0 0);
   --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.82 0.18 85);
-  --accent-foreground: oklch(1 0 0);
+  --accent: oklch(0.78 0.19 72);
+  --accent-foreground: oklch(0.08 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.15 0 0);
-  --input: oklch(0.1 0 0);
-  --ring: oklch(0.82 0.18 85);
-  --chart-1: oklch(0.82 0.18 85);
-  --chart-2: oklch(1 0 0);
+  --border: oklch(0.18 0 0);
+  --input: oklch(0.14 0 0);
+  --ring: oklch(0.78 0.19 72);
+  --chart-1: oklch(0.78 0.19 72);
+  --chart-2: oklch(0.97 0 0);
   --chart-3: oklch(0.7 0 0);
   --chart-4: oklch(0.4 0 0);
   --chart-5: oklch(0.8 0 0);
@@ -142,27 +131,27 @@ html {
 
 /* Custom utility classes for Black Building Academy colors */
 .bg-academy-black {
-  background-color: #000000;
+  background-color: #111111;
 }
 
 .bg-academy-orange {
-  background-color: #FFB902;
+  background-color: #ffb902;
 }
 
 .text-academy-orange {
-  color: #FFB902;
+  color: #ffb902;
 }
 
 .text-academy-black {
-  color: #000000;
+  color: #111111;
 }
 
 .border-academy-orange {
-  border-color: #FFB902;
+  border-color: #ffb902;
 }
 
 .hover\:bg-academy-orange:hover {
-  background-color: #FFB902;
+  background-color: #ffb902;
 }
 
 /* Custom scrollbar */
@@ -175,7 +164,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FFB902;
+  background: #ffb902;
   border-radius: 4px;
 }
 
@@ -183,11 +172,9 @@ html {
   background: #e5a702;
 }
 
-
-
 /* Focus styles for accessibility */
 .focus-visible:focus {
-  outline: 2px solid #FFB902;
+  outline: 2px solid #ffb902;
   outline-offset: 2px;
 }
 
